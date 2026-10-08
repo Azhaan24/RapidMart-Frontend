@@ -1,0 +1,879 @@
+<div class="min-h-screen bg-[#F8FAFC]">
+
+  <!-- =========================================
+       HEADER
+  ========================================== -->
+
+  <section class="bg-white border-b border-gray-100">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+      <div class="flex items-center gap-2 text-sm text-gray-500 mb-3">
+
+        <a
+          routerLink="/sales/dashboard"
+          class="hover:text-[#FF6A00] transition"
+        >
+          Sales Dashboard
+        </a>
+
+        <span>
+            
+            ›
+            
+        </span>
+
+        <span class="text-[#0B2A4A]">
+          Orders
+        </span>
+
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+
+        <div>
+
+          <h1 class="text-3xl font-bold text-[#0B2A4A]">
+            Order Management
+          </h1>
+
+          <p class="mt-2 text-gray-500">
+            Manage your assigned orders and take ownership of available orders.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          (click)="loadOrders()"
+          [disabled]="isLoading()"
+          class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-[#0B2A4A] text-white font-semibold hover:bg-[#123B63] transition cursor-pointer disabled:opacity-50"
+        >
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-4 h-4"
+            [class.animate-spin]="isLoading()"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 4v5h5"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 9a8 8 0 0 1 13.66-3.66L20 8"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M20 20v-5h-5"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M20 15a8 8 0 0 1-13.66 3.66L4 16"
+            />
+
+          </svg>
+
+          Refresh
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================
+       MAIN
+  ========================================== -->
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+
+    <!-- =========================================
+         SUCCESS / ERROR
+    ========================================== -->
+
+    @if (selfAssignSuccess()) {
+
+      <div class="mb-5 rounded-xl border border-green-200 bg-green-50 px-5 py-4">
+
+        <p class="text-sm font-medium text-green-700">
+          {{ selfAssignSuccess() }}
+        </p>
+
+      </div>
+
+    }
+
+    @if (selfAssignError()) {
+
+      <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-5 py-4">
+
+        <p class="text-sm font-medium text-red-700">
+          {{ selfAssignError() }}
+        </p>
+
+      </div>
+
+    }
+
+    @if (errorMessage()) {
+
+      <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-5 py-4">
+
+        <p class="text-sm font-medium text-red-700">
+          {{ errorMessage() }}
+        </p>
+
+      </div>
+
+    }
+
+
+    <!-- =========================================
+         SUMMARY
+    ========================================== -->
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+
+      <button
+        type="button"
+        (click)="setActiveTab('active')"
+        class="text-left bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition"
+      >
+
+        <p class="text-sm text-gray-500">
+          Active Orders
+        </p>
+
+        <p class="text-2xl font-bold text-[#0B2A4A] mt-1">
+          {{ dashboard()?.myActiveOrders }}
+        </p>
+
+      </button>
+
+
+      <button
+        type="button"
+        (click)="setActiveTab('unassigned')"
+        class="text-left bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition"
+      >
+
+        <p class="text-sm text-gray-500">
+          Available Orders
+        </p>
+
+        <p class="text-2xl font-bold text-[#FF6A00] mt-1">
+          {{ dashboard()?.availableOrdersForClaim }}
+        </p>
+
+      </button>
+
+
+      <button
+        type="button"
+        (click)="setActiveTab('assigned')"
+        class="text-left bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition"
+      >
+
+        <p class="text-sm text-gray-500">
+          My Assigned Orders
+        </p>
+
+        <p class="text-2xl font-bold text-[#0B2A4A] mt-1">
+          {{ dashboard()?.myAssignedOrders }}
+        </p>
+
+      </button>
+
+    </div>
+
+
+    <!-- =========================================
+         FILTERS
+    ========================================== -->
+
+    <section class="bg-white rounded-xl border border-gray-100 shadow-sm p-5 mb-6">
+
+      <div class="flex flex-col lg:flex-row gap-4">
+
+        <!-- SEARCH -->
+
+        <div class="flex-1">
+
+          <label class="block text-sm font-semibold text-[#0B2A4A] mb-2">
+            Search Orders
+          </label>
+
+          <div class="relative">
+
+            <svg
+              class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-4.35-4.35m2.35-5.65a8 8 0 11-16 0 8 8 0 0116 0z"
+              />
+            </svg>
+
+            <input
+              type="text"
+              [value]="searchTerm()"
+              (input)="setSearchTerm($any($event.target).value)"
+              placeholder="Search by order number or customer..."
+              class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg outline-none focus:border-[#FF6A00] focus:ring-2 focus:ring-[#FF6A00]/10"
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="w-full lg:w-56">
+
+          <label class="block text-sm font-semibold text-[#0B2A4A] mb-2">
+            Status
+          </label>
+
+          <select
+            [value]="selectedStatus() ?? ''"
+            (change)="setStatusFilter($any($event.target).value === '' ? null : +$any($event.target).value)"
+            class="w-full px-4 py-3 border border-gray-200 rounded-lg bg-white outline-none focus:border-[#FF6A00] focus:ring-2 focus:ring-[#FF6A00]/10"
+          >
+
+            <option value="">
+              All Statuses
+            </option>
+
+            @for (status of getStatusOptions(); track status.value) {
+
+              <option [value]="status.value">
+                {{ status.label }}
+              </option>
+
+            }
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <!-- TABS -->
+
+<div class="flex flex-wrap gap-2 mt-5 pt-5 border-t border-gray-100">
+
+  <!-- MY ASSIGNED -->
+
+  <button
+    type="button"
+    (click)="setActiveTab('active')"
+    [ngClass]="{
+      'bg-[#0B2A4A] text-white': activeTab() === 'active',
+      'bg-gray-100 text-gray-600': activeTab() !== 'active'
+    }"
+    class="px-4 py-2 rounded-lg text-sm font-semibold transition hover: cursor-pointer"
+  >
+    Active
+  </button>
+
+
+  <!-- AVAILABLE -->
+
+  <button
+    type="button"
+    (click)="setActiveTab('unassigned')"
+    [ngClass]="{
+      'bg-[#FF6A00] text-white': activeTab() === 'unassigned',
+      'bg-gray-100 text-gray-600': activeTab() !== 'unassigned'
+    }"
+    class="px-4 py-2 rounded-lg text-sm font-semibold transition hover:cursor-pointer"
+  >
+    Available
+  </button>
+
+
+  <!-- ALL ORDERS -->
+
+  <button
+    type="button"
+    (click)="setActiveTab('assigned')"
+    [ngClass]="{
+      'bg-[#0B2A4A] text-white': activeTab() === 'assigned',
+      'bg-gray-100 text-gray-600': activeTab() !== 'assigned'
+    }"
+    class="px-4 py-2 rounded-lg text-sm font-semibold transition cursor-pointer"
+  >
+    My Assigned
+  </button>
+
+  <button
+    type="button"
+    (click)="setActiveTab('all')"
+    [ngClass]="{
+      'bg-[#FF6A00] text-white': activeTab() === 'all',
+      'bg-gray-100 text-gray-600': activeTab() !== 'all'
+    }"
+    class="px-4 py-2 rounded-lg text-sm font-semibold transition hover:cursor-pointer"
+  >
+    All Orders
+  </button>
+
+</div>
+
+    </section>
+
+
+    <!-- =========================================
+         LOADING
+    ========================================== -->
+
+    @if (isLoading()) {
+
+      <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-8">
+
+        <div class="space-y-5">
+
+          @for (item of [1,2,3,4,5]; track item) {
+
+            <div class="animate-pulse flex items-center gap-4">
+
+              <div class="w-12 h-12 rounded-lg bg-gray-200"></div>
+
+              <div class="flex-1">
+
+                <div class="h-4 bg-gray-200 rounded w-40 mb-2"></div>
+
+                <div class="h-3 bg-gray-200 rounded w-64"></div>
+
+              </div>
+
+              <div class="h-8 bg-gray-200 rounded w-24"></div>
+
+            </div>
+
+          }
+
+        </div>
+
+      </div>
+
+    }
+
+
+    @else {
+
+      <!-- =========================================
+           EMPTY
+      ========================================== -->
+
+      @if (filteredOrders().length === 0) {
+
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-12 text-center">
+
+          <div class="w-16 h-16 mx-auto rounded-full bg-gray-100 flex items-center justify-center">
+
+            <svg
+              class="w-8 h-8 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.5L17 7.5V19a2 2 0 01-2 2z"
+              />
+            </svg>
+
+          </div>
+
+          <h3 class="mt-5 text-lg font-bold text-[#0B2A4A]">
+            No orders found
+          </h3>
+
+          <p class="mt-2 text-sm text-gray-500">
+            There are no orders matching your current filters.
+          </p>
+
+        </div>
+
+      }
+
+
+      <!-- =========================================
+           ORDER TABLE
+      ========================================== -->
+
+      @else {
+
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+
+          <div class="overflow-x-auto">
+
+            <table class="w-full">
+
+              <thead class="bg-gray-50 border-b border-gray-100">
+
+                <tr>
+
+                  <th class="text-left px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wide">
+                    Order
+                  </th>
+
+                  <th class="text-left px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wide">
+                    Customer
+                  </th>
+
+                  <th class="text-left px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wide">
+                    Date
+                  </th>
+
+                  <th class="text-left px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wide">
+                    Amount
+                  </th>
+
+                  <th class="text-left px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wide">
+                    Status
+                  </th>
+
+                  <th class="text-right px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wide">
+                    Action
+                  </th>
+
+                </tr>
+
+              </thead>
+
+              <tbody class="divide-y divide-gray-100">
+
+                @for (order of filteredOrders(); track order.id) {
+
+                  <tr class="hover:bg-gray-50 transition">
+
+                    <!-- ORDER -->
+
+                    <td class="px-5 py-5">
+
+                      <div>
+
+                        <p class="font-semibold text-[#0B2A4A]">
+                          {{ order.orderNumber }}
+                        </p>
+
+                        <p class="text-xs text-gray-500 mt-1">
+                          {{ order.items.length }} item(s)
+                        </p>
+
+                      </div>
+
+                    </td>
+
+
+                    <!-- CUSTOMER -->
+
+                    <td class="px-5 py-5">
+
+                      <p class="font-medium text-gray-700">
+                        {{ order.customerName || 'Customer' }}
+                      </p>
+
+                    </td>
+
+
+                    <!-- DATE -->
+
+                    <td class="px-5 py-5">
+
+                      <p class="text-sm text-gray-600">
+                        {{ order.createdAt | date:'dd MMM yyyy' }}
+                      </p>
+
+                    </td>
+
+
+                    <!-- AMOUNT -->
+
+                    <td class="px-5 py-5">
+
+                      <p class="font-semibold text-[#0B2A4A]">
+                        ₹{{ order.grandTotal | number:'1.2-2' }}
+                      </p>
+
+                      <p class="text-xs text-gray-500 mt-1">
+                        {{ getPaymentMethodText(order.paymentMethod) }}
+                      </p>
+
+                    </td>
+
+
+                    <!-- STATUS -->
+
+                    <td class="px-5 py-5">
+
+                      <span
+                        class="inline-flex px-3 py-1.5 rounded-full text-xs font-semibold"
+                        [class]="getStatusClass(order.status)"
+                      >
+                        {{ getStatusText(order.status) }}
+                      </span>
+
+                    </td>
+
+
+                    <!-- ACTION -->
+
+                    <td class="px-5 py-5">
+
+                      <div class="flex items-center justify-end gap-2">
+
+                        <!-- VIEW -->
+
+                        <a
+                          [routerLink]="['/sales/orders', order.id]"
+                          class="px-3 py-2 rounded-lg border border-gray-200 text-sm font-semibold text-[#0B2A4A] hover:border-[#FF6A00] hover:text-[#FF6A00] transition cursor-pointer"
+                        >
+                          View
+                        </a>
+
+
+                        <!-- SELF ASSIGN -->
+
+                        @if (
+                          activeTab() === 'unassigned'
+                          && order.status !== 5
+                          && order.status !== 6
+                        ) {
+
+                          <button
+                            type="button"
+                            (click)="selfAssign(order)"
+                            [disabled]="selfAssigningOrderId() === order.id"
+                            class="px-3 py-2 rounded-lg bg-[#FF6A00] text-white text-sm font-semibold hover:bg-[#e65d00] transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+
+                            @if (selfAssigningOrderId() === order.id) {
+                              Assigning...
+                            } @else {
+                              Self Assign
+                            }
+
+                          </button>
+
+                        }
+
+
+                        <!-- STATUS -->
+
+                        @if (
+                          activeTab() === 'assigned'
+                          || (
+                            activeTab() === 'all'
+                            && order.assignedStaffId
+                          )
+                        ) {
+
+                          <button
+                            type="button"
+                            (click)="openStatusModal(order)"
+                            [disabled]="order.status === 5 || order.status === 6"
+                            class="px-3 py-2 rounded-lg bg-[#0B2A4A] text-white text-sm font-semibold hover:bg-[#123B63] transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            Status
+                          </button>
+
+                        }
+
+                      </div>
+
+                    </td>
+
+                  </tr>
+
+                }
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+        <!-- Pagination -->
+<div
+  class="flex items-center justify-center gap-4 mt-6 pb-4"
+  *ngIf="filteredOrders().length > 0"
+>
+
+  <!-- Previous -->
+  <button
+    type="button"
+    (click)="goToPreviousPage()"
+    [disabled]="
+      activeTab() === 'active'
+        ? !activeOrdersHasPreviousPage()
+        : activeTab() === 'assigned'
+          ? !assignedOrdersHasPreviousPage()
+          : activeTab() === 'unassigned'
+            ? !unassignedOrdersHasPreviousPage()
+            : !allOrdersHasPreviousPage()
+    "
+    class="px-4 py-2 rounded-lg border border-gray-300
+           text-sm font-medium
+           disabled:opacity-40
+           disabled:cursor-not-allowed
+           hover:bg-gray-50 cursor-pointer"
+  >
+    Previous
+  </button>
+
+
+  <!-- Page information -->
+  <span class="text-sm text-gray-600">
+
+    Page
+
+    {{
+      activeTab() === 'active'
+        ? activeOrdersPageNumber()
+        : activeTab() === 'assigned'
+          ? assignedOrdersPageNumber()
+          : activeTab() === 'unassigned'
+            ? unassignedOrdersPageNumber()
+            : allOrdersPageNumber()
+    }}
+
+    of
+
+    {{
+      activeTab() === 'active'
+        ? activeOrdersTotalPages()
+        : activeTab() === 'assigned'
+          ? assignedOrdersTotalPages()
+          : activeTab() === 'unassigned'
+            ? unassignedOrdersTotalPages()
+            : allOrdersTotalPages()
+    }}
+
+  </span>
+
+
+  <!-- Next -->
+  <button
+    type="button"
+    (click)="goToNextPage()"
+    [disabled]="
+      activeTab() === 'active'
+        ? !activeOrdersHasNextPage()
+        : activeTab() === 'assigned'
+          ? !assignedOrdersHasNextPage()
+          : activeTab() === 'unassigned'
+            ? !unassignedOrdersHasNextPage()
+            : !allOrdersHasNextPage()
+    "
+    class="px-4 py-2 rounded-lg border border-gray-300
+           text-sm font-medium
+           disabled:opacity-40
+           disabled:cursor-not-allowed
+           hover:bg-gray-50 cursor-pointer"
+  >
+    Next
+  </button>
+
+</div>
+
+      }
+
+    }
+
+  </main>
+
+
+  <!-- =========================================
+       STATUS MODAL
+  ========================================== -->
+
+  @if (selectedStatusOrder(); as order) {
+
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+
+      <div
+        class="absolute inset-0 bg-black/40"
+        (click)="closeStatusModal()"
+      ></div>
+
+
+      <div class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+        <!-- MODAL HEADER -->
+
+        <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+
+          <div>
+
+            <h2 class="text-lg font-bold text-[#0B2A4A]">
+              Update Order Status
+            </h2>
+
+            <p class="text-sm text-gray-500 mt-1">
+              {{ order.orderNumber }}
+            </p>
+
+          </div>
+
+          <button
+            type="button"
+            (click)="closeStatusModal()"
+            [disabled]="isUpdatingStatus()"
+            class="w-9 h-9 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-500"
+          >
+
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+
+          </button>
+
+        </div>
+
+
+        <!-- MODAL BODY -->
+
+        <div class="p-6">
+
+          @if (statusUpdateError()) {
+
+            <div class="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3">
+
+              <p class="text-sm text-red-700">
+                {{ statusUpdateError() }}
+              </p>
+
+            </div>
+
+          }
+
+          @if (statusUpdateSuccess()) {
+
+            <div class="mb-4 rounded-lg bg-green-50 border border-green-200 px-4 py-3">
+
+              <p class="text-sm text-green-700">
+                {{ statusUpdateSuccess() }}
+              </p>
+
+            </div>
+
+          }
+
+
+          <div class="mb-5">
+
+            <p class="text-sm text-gray-500">
+              Current Status
+            </p>
+
+            <span
+              class="inline-flex mt-2 px-3 py-1.5 rounded-full text-xs font-semibold"
+              [class]="getStatusClass(order.status)"
+            >
+              {{ getStatusText(order.status) }}
+            </span>
+
+          </div>
+
+
+          <label class="block text-sm font-semibold text-[#0B2A4A] mb-2">
+            New Status
+          </label>
+
+          <select
+            [value]="newOrderStatus()"
+            (change)="setNewOrderStatus(+$any($event.target).value)"
+            class="w-full px-4 py-3 border border-gray-200 rounded-lg bg-white outline-none focus:border-[#FF6A00] focus:ring-2 focus:ring-[#FF6A00]/10"
+          >
+
+            @for (status of getStatusOptions(); track status.value) {
+
+              <option [value]="status.value">
+                {{ status.label }}
+              </option>
+
+            }
+
+          </select>
+
+        </div>
+
+
+        <!-- MODAL FOOTER -->
+
+        <div class="px-6 py-5 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+
+          <button
+            type="button"
+            (click)="closeStatusModal()"
+            [disabled]="isUpdatingStatus()"
+            class="px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-gray-700 font-semibold hover:bg-gray-50 transition disabled:opacity-50"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            (click)="updateOrderStatus()"
+            [disabled]="isUpdatingStatus()"
+            class="px-5 py-2.5 rounded-lg bg-[#FF6A00] text-white font-semibold hover:bg-[#e65d00] transition disabled:opacity-50"
+          >
+
+            @if (isUpdatingStatus()) {
+              Updating...
+            } @else {
+              Update Status
+            }
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

@@ -1,0 +1,860 @@
+<div class="min-h-screen bg-[#F8FAFC]">
+
+  <!-- ==========================================
+       PAGE HEADER
+  =========================================== -->
+
+  <section class="bg-white border-b border-gray-100">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+      <div
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+
+        <div>
+
+          <p
+            class="text-sm font-semibold text-[#FF6A00] uppercase tracking-wide"
+          >
+            Manager Panel
+          </p>
+
+          <h1 class="mt-1 text-3xl font-bold text-[#0B2A4A]">
+            Manager Dashboard
+          </h1>
+
+          <p class="mt-2 text-gray-500">
+            Monitor orders, staff, inventory and daily operations.
+          </p>
+
+        </div>
+
+        <div
+          class="w-12 h-12 rounded-xl bg-[#0B2A4A] flex items-center justify-center text-white shadow-sm"
+        >
+
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622C17.176 19.29 21 14.591 21 9c0-1.04-.133-2.049-.382-3.016z"
+            />
+
+          </svg>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ==========================================
+       MAIN CONTENT
+  =========================================== -->
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+
+    <!-- ==========================================
+         ORDER SUMMARY
+    =========================================== -->
+
+    <div class="mb-8">
+
+      <div class="flex items-center justify-between mb-4">
+
+        <div>
+
+          <h2 class="text-xl font-bold text-[#0B2A4A]">
+            Order Overview
+          </h2>
+
+          <p class="text-sm text-gray-500 mt-1">
+            Current order activity across RapidMart.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          (click)="openOrders()"
+          class="text-sm font-semibold text-[#FF6A00] hover:text-[#d94f00] cursor-pointer"
+        >
+          View All Orders →
+        </button>
+
+      </div>
+
+
+      <!-- ==========================================
+           DASHBOARD LOADING
+      =========================================== -->
+
+      @if (isLoading()) {
+
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+        >
+
+          @for (card of [1, 2, 3, 4, 5, 6]; track card) {
+
+            <div
+              class="h-32 bg-white rounded-xl border border-gray-100 animate-pulse"
+            ></div>
+
+          }
+
+        </div>
+
+      }
+
+
+      <!-- ==========================================
+           ORDER CARDS
+      =========================================== -->
+
+      @if (!isLoading()) {
+
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+        >
+
+          <!-- TOTAL ORDERS -->
+
+          <div
+            class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"
+          >
+
+            <div class="flex items-start justify-between">
+
+              <div>
+
+                <p class="text-sm text-gray-500">
+                  Total Orders
+                </p>
+
+                <p class="mt-2 text-3xl font-bold text-[#0B2A4A]">
+                  {{ dashboard()?.totalOrders ?? 0 }}
+                </p>
+
+              </div>
+
+              <div
+                class="w-11 h-11 rounded-lg bg-blue-50 flex items-center justify-center"
+              >
+
+                <svg
+                  class="w-5 h-5 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0H4m4-4h8"
+                  />
+
+                </svg>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- PENDING -->
+
+          <div
+            class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"
+          >
+
+            <div class="flex items-start justify-between">
+
+              <div>
+
+                <p class="text-sm text-gray-500">
+                  Pending Orders
+                </p>
+
+                <p class="mt-2 text-3xl font-bold text-amber-600">
+                  {{ dashboard()?.pendingOrders ?? 0 }}
+                </p>
+
+              </div>
+
+              <div
+                class="w-11 h-11 rounded-lg bg-amber-50 flex items-center justify-center"
+              >
+
+                <svg
+                  class="w-5 h-5 text-amber-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+
+                </svg>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- PROCESSING -->
+
+          <div
+            class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"
+          >
+
+            <div class="flex items-start justify-between">
+
+              <div>
+
+                <p class="text-sm text-gray-500">
+                  Processing
+                </p>
+
+                <p class="mt-2 text-3xl font-bold text-blue-600">
+                  {{ dashboard()?.processingOrders ?? 0 }}
+                </p>
+
+              </div>
+
+              <div
+                class="w-11 h-11 rounded-lg bg-blue-50 flex items-center justify-center"
+              >
+
+                <svg
+                  class="w-5 h-5 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4.582 9H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2M19.419 15H15"
+                  />
+
+                </svg>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- OUT FOR DELIVERY -->
+
+          <div
+            class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"
+          >
+
+            <div class="flex items-start justify-between">
+
+              <div>
+
+                <p class="text-sm text-gray-500">
+                  Out for Delivery
+                </p>
+
+                <p class="mt-2 text-3xl font-bold text-indigo-600">
+                  {{ dashboard()?.outForDelivery ?? 0 }}
+                </p>
+
+              </div>
+
+              <div
+                class="w-11 h-11 rounded-lg bg-indigo-50 flex items-center justify-center"
+              >
+
+                <svg
+                  class="w-5 h-5 text-indigo-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10h10zm0 0h4l3 3v2h-7v-5zm-9 5h.01M16 21h.01"
+                  />
+
+                </svg>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- RETURN REQUESTS -->
+
+          <div
+            class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"
+          >
+
+            <div class="flex items-start justify-between">
+
+              <div>
+
+                <p class="text-sm text-gray-500">
+                  Return Requests
+                </p>
+
+                <p class="mt-2 text-3xl font-bold text-orange-600">
+                  {{ dashboard()?.returnRequests ?? 0 }}
+                </p>
+
+              </div>
+
+              <div
+                class="w-11 h-11 rounded-lg bg-orange-50 flex items-center justify-center"
+              >
+
+                <svg
+                  class="w-5 h-5 text-orange-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 10h10a4 4 0 014 4v1m0 0l4-4m-4 4l-4-4M21 14v5a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v3"
+                  />
+
+                </svg>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- UNASSIGNED -->
+
+          <div
+            class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"
+          >
+
+            <div class="flex items-start justify-between">
+
+              <div>
+
+                <p class="text-sm text-gray-500">
+                  Unassigned Orders
+                </p>
+
+                <p class="mt-2 text-3xl font-bold text-red-600">
+                  {{ dashboard()?.totalUnassignedOrders ?? 0 }}
+                </p>
+
+              </div>
+
+              <div
+                class="w-11 h-11 rounded-lg bg-red-50 flex items-center justify-center"
+              >
+
+                <svg
+                  class="w-5 h-5 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.73-3L13.73 4a2 2 0 00-3.46 0L3.34 16a2 2 0 001.73 3z"
+                  />
+
+                </svg>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      }
+
+
+      <!-- DASHBOARD ERROR -->
+
+      @if (errorMessage()) {
+
+        <div
+          class="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700"
+        >
+          {{ errorMessage() }}
+        </div>
+
+      }
+
+    </div>
+
+
+    <!-- ==========================================
+         OPERATIONS
+    =========================================== -->
+
+    <div class="mb-8">
+
+      <div class="mb-4">
+
+        <h2 class="text-xl font-bold text-[#0B2A4A]">
+          Operations
+        </h2>
+
+        <p class="text-sm text-gray-500 mt-1">
+          Quickly access the areas you manage.
+        </p>
+
+      </div>
+
+
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5"
+      >
+
+
+        <!-- ORDER MANAGEMENT -->
+
+        <button
+          type="button"
+          (click)="openOrders()"
+          class="text-left bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-md hover:border-[#FF6A00]/30 transition cursor-pointer"
+        >
+
+          <div
+            class="w-12 h-12 rounded-xl bg-[#0B2A4A] flex items-center justify-center mb-5"
+          >
+
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+              />
+
+            </svg>
+
+          </div>
+
+          <h3 class="font-bold text-[#0B2A4A]">
+            Order Management
+          </h3>
+
+          <p class="mt-2 text-sm text-gray-500">
+            View, assign and update customer orders.
+          </p>
+
+          <div class="mt-4 text-sm font-semibold text-[#FF6A00]">
+            Manage Orders →
+          </div>
+
+        </button>
+
+
+        <!-- STAFF WORKLOAD -->
+
+        <button
+          type="button"
+          (click)="openStaffWorkload()"
+          class="text-left bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-md hover:border-[#FF6A00]/30 transition cursor-pointer"
+        >
+
+          <div
+            class="w-12 h-12 rounded-xl bg-[#0B2A4A] flex items-center justify-center mb-5"
+          >
+
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+              />
+
+            </svg>
+
+          </div>
+
+          <h3 class="font-bold text-[#0B2A4A]">
+            Staff Workload
+          </h3>
+
+          <p class="mt-2 text-sm text-gray-500">
+            Monitor SalesStaff assignments and performance.
+          </p>
+
+          <div class="mt-4 text-sm font-semibold text-[#FF6A00]">
+            View Workload →
+          </div>
+
+        </button>
+
+
+        <!-- INVENTORY -->
+
+        <button
+          type="button"
+          (click)="openInventory()"
+          class="text-left bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-md hover:border-[#FF6A00]/30 transition cursor-pointer"
+        >
+
+          <div
+            class="w-12 h-12 rounded-xl bg-[#0B2A4A] flex items-center justify-center mb-5"
+          >
+
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+              />
+
+            </svg>
+
+          </div>
+
+          <h3 class="font-bold text-[#0B2A4A]">
+            Inventory & Stock
+          </h3>
+
+          <p class="mt-2 text-sm text-gray-500">
+            Monitor stock levels and adjust inventory.
+          </p>
+
+          <div class="mt-4 text-sm font-semibold text-[#FF6A00]">
+            Manage Inventory →
+          </div>
+
+        </button>
+
+
+        <!-- PRODUCTS -->
+
+        <button
+          type="button"
+          (click)="openProducts()"
+          class="text-left bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-md hover:border-[#FF6A00]/30 transition cursor-pointer"
+        >
+
+          <div
+            class="w-12 h-12 rounded-xl bg-[#0B2A4A] flex items-center justify-center mb-5"
+          >
+
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+              />
+
+            </svg>
+
+          </div>
+
+          <h3 class="font-bold text-[#0B2A4A]">
+            Products
+          </h3>
+
+          <p class="mt-2 text-sm text-gray-500">
+            View product information and catalog details.
+          </p>
+
+          <div class="mt-4 text-sm font-semibold text-[#FF6A00]">
+            View Products →
+          </div>
+
+        </button>
+
+
+        <!-- RETURN MANAGEMENT -->
+
+        <button
+          type="button"
+          (click)="openReturns()"
+          class="text-left bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-md hover:border-[#FF6A00]/30 transition cursor-pointer"
+        >
+
+          <div
+            class="w-12 h-12 rounded-xl bg-[#0B2A4A] flex items-center justify-center mb-5"
+          >
+
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 14l-3-3m0 0l3-3m-3 3h8a4 4 0 014 4v1m0 0l4-4m-4 4l-4-4"
+              />
+
+            </svg>
+
+          </div>
+
+          <h3 class="font-bold text-[#0B2A4A]">
+            Return Management
+          </h3>
+
+          <p class="mt-2 text-sm text-gray-500">
+            Review return requests and process customer refunds.
+          </p>
+
+          <div class="mt-4 text-sm font-semibold text-[#FF6A00]">
+            Manage Returns →
+          </div>
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         INVENTORY OVERVIEW
+    =========================================== -->
+
+    <div>
+
+      <div class="flex items-center justify-between mb-4">
+
+        <div>
+
+          <h2 class="text-xl font-bold text-[#0B2A4A]">
+            Inventory Overview
+          </h2>
+
+          <p class="text-sm text-gray-500 mt-1">
+            Current stock health across your catalog.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          (click)="openInventory()"
+          class="text-sm font-semibold text-[#FF6A00] hover:text-[#d94f00] cursor-pointer"
+        >
+          View Inventory →
+        </button>
+
+      </div>
+
+
+      <!-- INVENTORY LOADING -->
+
+      @if (isLoading()) {
+
+        <div
+          class="bg-white rounded-xl border border-gray-100 p-6 animate-pulse"
+        >
+
+          <div class="h-6 bg-gray-200 rounded w-48"></div>
+
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6"
+          >
+
+            <div class="h-20 bg-gray-100 rounded-lg"></div>
+
+            <div class="h-20 bg-gray-100 rounded-lg"></div>
+
+          </div>
+
+        </div>
+
+      }
+
+
+      <!-- INVENTORY CARDS -->
+
+      @if (!isLoading()) {
+
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 gap-5"
+        >
+
+          <!-- LOW STOCK -->
+
+          <div
+            class="bg-white rounded-xl border border-amber-200 p-6 shadow-sm"
+          >
+
+            <div class="flex items-center justify-between">
+
+              <div>
+
+                <p class="text-sm text-gray-500">
+                  Low Stock Items
+                </p>
+
+                <p class="mt-2 text-3xl font-bold text-amber-600">
+                  {{ dashboard()?.lowStock ?? 0 }}
+                </p>
+
+                <p class="mt-1 text-sm text-gray-500">
+                  Items with 1–10 available units
+                </p>
+
+              </div>
+
+              <div
+                class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center"
+              >
+
+                <svg
+                  class="w-6 h-6 text-amber-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.73-3L13.73 4a2 2 0 00-3.46 0L3.34 16a2 2 0 001.73 3z"
+                  />
+
+                </svg>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- OUT OF STOCK -->
+
+          <div
+            class="bg-white rounded-xl border border-red-200 p-6 shadow-sm"
+          >
+
+            <div class="flex items-center justify-between">
+
+              <div>
+
+                <p class="text-sm text-gray-500">
+                  Out of Stock
+                </p>
+
+                <p class="mt-2 text-3xl font-bold text-red-600">
+                  {{ dashboard()?.outOfStock ?? 0 }}
+                </p>
+
+                <p class="mt-1 text-sm text-gray-500">
+                  Items with no available stock
+                </p>
+
+              </div>
+
+              <div
+                class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center"
+              >
+
+                <svg
+                  class="w-6 h-6 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+
+                </svg>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+  </main>
+
+</div>

@@ -1,0 +1,473 @@
+<div class="min-h-screen bg-gray-50 p-6">
+
+  <div class="max-w-5xl mx-auto">
+
+    <!-- Header -->
+    <div class="mb-8">
+
+      <h1
+        class="text-3xl font-bold text-[#0B2A4A]"
+      >
+        Store & Delivery Settings
+      </h1>
+
+      <p class="mt-2 text-gray-600">
+        Manage your store location and customer
+        delivery rules.
+      </p>
+
+    </div>
+
+
+    <!-- Loading -->
+    @if (isLoading()) {
+
+      <div
+        class="bg-white rounded-xl shadow-sm p-8 text-center"
+      >
+        <p class="text-gray-600">
+          Loading store settings...
+        </p>
+      </div>
+
+    }
+
+    @else {
+
+      <!-- Success -->
+      @if (successMessage()) {
+
+        <div
+          class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-700"
+        >
+          {{ successMessage() }}
+        </div>
+
+      }
+
+
+      <!-- Error -->
+      @if (errorMessage()) {
+
+        <div
+          class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700"
+        >
+          {{ errorMessage() }}
+        </div>
+
+      }
+
+
+      <div
+        class="bg-white rounded-xl shadow-sm border border-gray-100"
+      >
+
+        <div class="p-6">
+
+          <!-- Store Information -->
+          <div class="mb-8">
+
+            <h2
+              class="text-xl font-semibold text-[#0B2A4A]"
+            >
+              Store Information
+            </h2>
+
+            <p class="mt-1 text-sm text-gray-500">
+              Basic information about your RapidMart store.
+            </p>
+
+          </div>
+
+
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 gap-6"
+          >
+
+            <!-- Store Name -->
+            <div>
+
+              <label
+                class="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Store Name
+              </label>
+
+              <input
+                type="text"
+                [ngModel]="storeName()"
+                (ngModelChange)="storeName.set($event)"
+                maxlength="200"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0B2A4A]"
+              />
+
+            </div>
+
+
+            <!-- Address -->
+            <div>
+
+              <label
+                class="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Store Address
+              </label>
+
+              <input
+                type="text"
+                [ngModel]="address()"
+                (ngModelChange)="address.set($event)"
+                maxlength="500"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0B2A4A]"
+              />
+
+            </div>
+
+
+            <!-- Latitude -->
+            <div>
+
+              <label
+                class="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Latitude
+              </label>
+
+              <input
+                type="number"
+                step="0.0000001"
+                [ngModel]="latitude()"
+                (ngModelChange)="latitude.set($event)"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0B2A4A]"
+              />
+
+              <p class="mt-1 text-xs text-gray-500">
+                Example: 24.58
+              </p>
+
+            </div>
+
+
+            <!-- Longitude -->
+            <div>
+
+              <label
+                class="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Longitude
+              </label>
+
+              <input
+                type="number"
+                step="0.0000001"
+                [ngModel]="longitude()"
+                (ngModelChange)="longitude.set($event)"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0B2A4A]"
+              />
+
+              <p class="mt-1 text-xs text-gray-500">
+                Example: 73.68
+              </p>
+
+            </div>
+
+            <div>
+
+              <label
+                class="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Return window days
+              </label>
+
+              <input
+                type="number"
+                step="1"
+                min="0"
+                [ngModel]="returnWindow()"
+                (ngModelChange)="returnWindow.set($event)"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0B2A4A]"
+              />
+
+              <p class="mt-1 text-xs text-gray-500">
+                Example: 7
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- Delivery Rules -->
+          <div
+            class="mt-10 mb-8"
+          >
+
+            <h2
+              class="text-xl font-semibold text-[#0B2A4A]"
+            >
+              Delivery Rules
+            </h2>
+
+            <p class="mt-1 text-sm text-gray-500">
+              Configure delivery distance and pricing.
+            </p>
+
+          </div>
+
+
+          <div
+            class="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+
+            <!-- Free Distance -->
+            <div>
+
+              <label
+                class="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Free Delivery Distance (km)
+              </label>
+
+              <input
+                type="number"
+                min="0"
+                max="1000"
+                step="0.1"
+                [ngModel]="freeDeliveryDistanceKm()"
+                (ngModelChange)="freeDeliveryDistanceKm.set($event)"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0B2A4A]"
+              />
+
+              <p class="mt-1 text-xs text-gray-500">
+                Customers within this distance get free delivery.
+              </p>
+
+            </div>
+
+
+            <!-- Rate -->
+            <div>
+
+              <label
+                class="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Delivery Rate (₹ / km)
+              </label>
+
+              <input
+                type="number"
+                min="0"
+                max="100000"
+                step="0.01"
+                [ngModel]="deliveryRatePerKm()"
+                (ngModelChange)="deliveryRatePerKm.set($event)"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0B2A4A]"
+              />
+
+              <p class="mt-1 text-xs text-gray-500">
+                Applied only to distance beyond the free distance.
+              </p>
+
+            </div>
+
+
+            <!-- Maximum Distance -->
+            <div>
+
+              <label
+                class="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Maximum Delivery Distance (km)
+              </label>
+
+              <input
+                type="number"
+                min="0"
+                max="1000"
+                step="0.1"
+                [ngModel]="maximumDeliveryDistanceKm()"
+                (ngModelChange)="maximumDeliveryDistanceKm.set($event)"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0B2A4A]"
+              />
+
+              <p class="mt-1 text-xs text-gray-500">
+                Customers beyond this distance cannot place new orders.
+              </p>
+
+            </div>
+
+            <div>
+
+              <label
+                class="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Minimum Delivery Charge (₹)
+              </label>
+
+              <input
+                type="number"
+                min="0"
+                max="1000"
+                step="0.1"
+                [ngModel]="minimumDeliveryCharge()"
+                (ngModelChange)="minimumDeliveryCharge.set($event)"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0B2A4A]"
+              />
+
+              <p class="mt-1 text-xs text-gray-500">
+                Minimum delivery charge applicable to customers beyond free delivery range.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- Delivery Time -->
+          <div
+            class="mt-10 mb-8"
+          >
+
+            <h2
+              class="text-xl font-semibold text-[#0B2A4A]"
+            >
+              Delivery Time
+            </h2>
+
+            <p class="mt-1 text-sm text-gray-500">
+              These values are added to the OSRM driving-time estimate.
+            </p>
+
+          </div>
+
+
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 gap-6"
+          >
+
+            <!-- Preparation -->
+            <div>
+
+              <label
+                class="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Preparation Time (minutes)
+              </label>
+
+              <input
+                type="number"
+                min="0"
+                max="120"
+                step="1"
+                [ngModel]="preparationTimeMinutes()"
+                (ngModelChange)="preparationTimeMinutes.set($event)"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0B2A4A]"
+              />
+
+              <p class="mt-1 text-xs text-gray-500">
+                Time needed to pick, pack and hand over the order.
+              </p>
+
+            </div>
+
+
+            <!-- Buffer -->
+            <div>
+
+              <label
+                class="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Traffic / Weather Buffer (minutes)
+              </label>
+
+              <input
+                type="number"
+                min="0"
+                max="120"
+                step="1"
+                [ngModel]="deliveryBufferMinutes()"
+                (ngModelChange)="deliveryBufferMinutes.set($event)"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0B2A4A]"
+              />
+
+              <p class="mt-1 text-xs text-gray-500">
+                Extra time because OSRM does not provide live traffic conditions.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- Example -->
+          <div
+            class="mt-8 rounded-lg bg-gray-50 border border-gray-200 p-5"
+          >
+
+            <h3
+              class="font-semibold text-[#0B2A4A]"
+            >
+              How these settings work
+            </h3>
+
+            <div
+              class="mt-3 text-sm text-gray-600 space-y-2"
+            >
+
+              <p>
+                <strong>Free delivery:</strong>
+                Customers within the configured free-distance receive ₹0 delivery.
+              </p>
+
+              <p>
+                <strong>Paid delivery:</strong>
+                Distance beyond the free limit is charged using the configured rate per kilometre.
+              </p>
+
+              <p>
+                <strong>Delivery time:</strong>
+                OSRM driving time + preparation time + traffic/weather buffer.
+              </p>
+
+              <p>
+                <strong>Maximum distance:</strong>
+                Customers beyond this distance cannot place new orders.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- Save -->
+          <div
+            class="mt-8 flex justify-end"
+          >
+
+            <button
+              type="button"
+              (click)="saveSettings()"
+              [disabled]="isSaving()"
+              class="inline-flex items-center justify-center rounded-lg bg-[#0B2A4A] px-6 py-3 font-semibold text-white transition hover:bg-[#123B63] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+            >
+
+              @if (isSaving()) {
+                Saving...
+              }
+              @else {
+                Save Delivery Settings
+              }
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+</div>

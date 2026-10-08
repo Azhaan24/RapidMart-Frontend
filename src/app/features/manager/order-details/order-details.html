@@ -1,0 +1,788 @@
+<div class="min-h-screen bg-[#F8FAFC]">
+
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <section class="bg-white border-b border-gray-100">
+
+    <div
+      class="max-w-7xl mx-auto
+             px-4 sm:px-6 lg:px-8
+             py-6">
+
+      <button
+        type="button"
+        (click)="goBack()"
+        class="inline-flex items-center gap-2
+               text-sm font-medium
+               text-gray-600
+               hover:text-[#0B2A4A]
+               transition">
+
+        ← Back to Orders
+
+      </button>
+
+
+      @if (order(); as currentOrder) {
+
+        <div class="mt-5">
+
+          <p class="text-sm font-semibold text-[#FF6A00]">
+            Manager Operations
+          </p>
+
+          <div
+            class="flex flex-col sm:flex-row
+                   sm:items-center
+                   sm:justify-between
+                   gap-4">
+
+            <div>
+
+              <h1
+                class="text-3xl font-bold
+                       text-[#0B2A4A] mt-1">
+
+                Order {{ currentOrder.orderNumber }}
+
+              </h1>
+
+              <p class="text-sm text-gray-500 mt-1">
+
+                Created
+                {{ formatDateTime(currentOrder.createdAt) }}
+
+              </p>
+
+            </div>
+
+
+            <span
+              class="inline-flex self-start
+                     px-4 py-2
+                     rounded-full
+                     bg-gray-100
+                     text-gray-700
+                     text-sm font-semibold">
+
+              {{ getStatusLabel(currentOrder.status) }}
+
+            </span>
+
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =====================================================
+       MAIN
+  ====================================================== -->
+
+  <main
+    class="max-w-7xl mx-auto
+           px-4 sm:px-6 lg:px-8
+           py-8">
+
+
+    <!-- =================================================
+         LOADING
+    ================================================== -->
+
+    @if (isLoading()) {
+
+      <div
+        class="bg-white rounded-xl
+               border border-gray-100
+               shadow-sm
+               flex flex-col
+               items-center
+               justify-center
+               py-20">
+
+        <div
+          class="w-10 h-10
+                 border-4 border-gray-200
+                 border-t-[#FF6A00]
+                 rounded-full
+                 animate-spin">
+        </div>
+
+        <p class="text-sm text-gray-500 mt-4">
+          Loading order details...
+        </p>
+
+      </div>
+
+    }
+
+
+    <!-- =================================================
+         ERROR
+    ================================================== -->
+
+    @else if (errorMessage()) {
+
+      <div
+        class="bg-white rounded-xl
+               border border-red-200
+               shadow-sm
+               p-8 text-center">
+
+        <div class="text-4xl mb-4">
+          ⚠️
+        </div>
+
+        <h2
+          class="text-xl font-bold
+                 text-[#0B2A4A]">
+
+          Unable to Load Order
+
+        </h2>
+
+        <p class="text-sm text-red-600 mt-2">
+          {{ errorMessage() }}
+        </p>
+
+
+        <button
+          type="button"
+          (click)="goBack()"
+          class="mt-6
+                 px-5 py-2.5
+                 rounded-lg
+                 bg-[#0B2A4A]
+                 text-white
+                 text-sm font-semibold
+                 hover:bg-[#123B63]
+                 transition">
+
+          Back to Orders
+
+        </button>
+
+      </div>
+
+    }
+
+
+    <!-- =================================================
+         ORDER DETAILS
+    ================================================== -->
+
+    @else if (order(); as currentOrder) {
+
+      <div class="space-y-6">
+
+
+        <!-- =================================================
+             TOP INFORMATION
+        ================================================== -->
+
+        <div
+          class="grid grid-cols-1
+                 lg:grid-cols-3
+                 gap-6">
+
+
+          <!-- CUSTOMER -->
+
+          <section
+            class="bg-white rounded-xl
+                   border border-gray-100
+                   shadow-sm p-6">
+
+            <div class="flex items-center gap-3 mb-5">
+
+              <div
+                class="w-10 h-10
+                       rounded-lg
+                       bg-blue-50
+                       flex items-center
+                       justify-center">
+
+                👤
+
+              </div>
+
+              <h2
+                class="text-lg font-bold
+                       text-[#0B2A4A]">
+
+                Customer
+
+              </h2>
+
+            </div>
+
+
+            <div class="space-y-3">
+
+              <div>
+
+                <p class="text-xs text-gray-500">
+                  Name
+                </p>
+
+                <p
+                  class="text-sm font-semibold
+                         text-gray-800 mt-1">
+
+                  {{ currentOrder.customerName || 'Customer' }}
+
+                </p>
+
+              </div>
+
+
+              <div>
+
+                <p class="text-xs text-gray-500">
+                  User ID
+                </p>
+
+                <p
+                  class="text-sm text-gray-700
+                         mt-1 break-all">
+
+                  {{ currentOrder.userId }}
+
+                </p>
+
+              </div>
+
+            </div>
+
+          </section>
+
+
+
+          <!-- ASSIGNED STAFF -->
+
+          <section
+            class="bg-white rounded-xl
+                   border border-gray-100
+                   shadow-sm p-6">
+
+            <div class="flex items-center gap-3 mb-5">
+
+              <div
+                class="w-10 h-10
+                       rounded-lg
+                       bg-orange-50
+                       flex items-center
+                       justify-center">
+
+                👨‍💼
+
+              </div>
+
+              <h2
+                class="text-lg font-bold
+                       text-[#0B2A4A]">
+
+                Assigned Staff
+
+              </h2>
+
+            </div>
+
+
+            @if (currentOrder.assignedStaffName) {
+
+              <p
+                class="text-base font-semibold
+                       text-gray-800">
+
+                {{ currentOrder.assignedStaffName }}
+
+              </p>
+
+              <p class="text-sm text-green-600 mt-1">
+                Assigned
+              </p>
+
+            }
+
+            @else {
+
+              <p
+                class="text-base font-semibold
+                       text-red-500">
+
+                Unassigned
+
+              </p>
+
+              <p class="text-sm text-gray-500 mt-1">
+                No SalesStaff member assigned yet.
+              </p>
+
+            }
+
+          </section>
+
+
+
+          <!-- PAYMENT -->
+
+          <section
+            class="bg-white rounded-xl
+                   border border-gray-100
+                   shadow-sm p-6">
+
+            <div class="flex items-center gap-3 mb-5">
+
+              <div
+                class="w-10 h-10
+                       rounded-lg
+                       bg-green-50
+                       flex items-center
+                       justify-center">
+
+                ₹
+
+              </div>
+
+              <h2
+                class="text-lg font-bold
+                       text-[#0B2A4A]">
+
+                Payment
+
+              </h2>
+
+            </div>
+
+
+            <div class="space-y-3">
+
+              <div>
+
+                <p class="text-xs text-gray-500">
+                  Method
+                </p>
+
+                <p
+                  class="text-sm font-semibold
+                         text-gray-800 mt-1">
+
+                  {{ getPaymentMethodLabel(currentOrder.paymentMethod) }}
+
+                </p>
+
+              </div>
+
+
+              <div>
+
+                <p class="text-xs text-gray-500">
+                  Status
+                </p>
+
+                <p
+                  class="text-sm font-semibold
+                         text-gray-800 mt-1">
+
+                  {{ getPaymentStatusLabel(currentOrder.paymentStatus) }}
+
+                </p>
+
+              </div>
+
+            </div>
+
+          </section>
+
+        </div>
+
+
+
+        <!-- =================================================
+             ITEMS
+        ================================================== -->
+
+        <section
+          class="bg-white rounded-xl
+                 border border-gray-100
+                 shadow-sm overflow-hidden">
+
+          <div
+            class="px-6 py-5
+                   border-b border-gray-100">
+
+            <h2
+              class="text-lg font-bold
+                     text-[#0B2A4A]">
+
+              Order Items
+
+            </h2>
+
+            <p class="text-sm text-gray-500 mt-1">
+
+              {{ currentOrder.items.length }}
+              item(s)
+
+            </p>
+
+          </div>
+
+
+          <div class="divide-y divide-gray-100">
+
+            @for (
+              item of currentOrder.items;
+              track item.id
+            ) {
+
+              <div
+                class="p-6
+                       flex flex-col sm:flex-row
+                       sm:items-center
+                       gap-5">
+
+
+                <!-- IMAGE -->
+
+                <div
+                  class="w-20 h-20
+                         rounded-lg
+                         bg-gray-100
+                         overflow-hidden
+                         flex-shrink-0">
+
+                  @if (item.imageUrl) {
+
+                    <img
+                      [src]="
+                        item.imageUrl?.startsWith('http')
+                          ? item.imageUrl
+                          : 'http://localhost:5051' + item.imageUrl
+                      "
+                      [alt]="item.itemName"
+                      class="w-full h-full
+                             object-cover">
+
+                  }
+
+                  @else {
+
+                    <div
+                      class="w-full h-full
+                             flex items-center
+                             justify-center
+                             text-gray-400">
+
+                      📦
+
+                    </div>
+
+                  }
+
+                </div>
+
+
+
+                <!-- ITEM INFO -->
+
+                <div class="flex-1">
+
+                  <h3
+                    class="font-semibold
+                           text-gray-800">
+
+                    {{ item.itemName }}
+
+                  </h3>
+
+                  <p
+                    class="text-sm
+                           text-gray-500 mt-1">
+
+                    ₹{{ item.unitPrice | number:'1.2-2' }}
+                    ×
+                    {{ item.quantity }}
+
+                  </p>
+
+                </div>
+
+
+
+                <!-- TOTAL -->
+
+                <div class="text-right">
+
+                  <p class="text-xs text-gray-500">
+                    Item Total
+                  </p>
+
+                  <p
+                    class="font-bold
+                           text-[#0B2A4A]
+                           mt-1">
+
+                    ₹{{ item.totalAmount | number:'1.2-2' }}
+
+                  </p>
+
+                </div>
+
+              </div>
+
+            }
+
+          </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             SHIPPING + SUMMARY
+        ================================================== -->
+
+        <div
+          class="grid grid-cols-1
+                 lg:grid-cols-2
+                 gap-6">
+
+
+          <!-- SHIPPING -->
+
+          <section
+            class="bg-white rounded-xl
+                   border border-gray-100
+                   shadow-sm p-6">
+
+            <h2
+              class="text-lg font-bold
+                     text-[#0B2A4A] mb-5">
+
+              Shipping Information
+
+            </h2>
+
+
+            <div>
+
+              <p class="text-xs text-gray-500">
+                Delivery Address
+              </p>
+
+              <p
+                class="text-sm text-gray-700
+                       mt-2 whitespace-pre-line">
+
+                {{ currentOrder.shippingAddress }}
+
+              </p>
+
+            </div>
+
+
+            @if (currentOrder.customerNotes) {
+
+              <div class="mt-5 pt-5 border-t border-gray-100">
+
+                <p class="text-xs text-gray-500">
+                  Customer Notes
+                </p>
+
+                <p
+                  class="text-sm text-gray-700
+                         mt-2">
+
+                  {{ currentOrder.customerNotes }}
+
+                </p>
+
+              </div>
+
+            }
+
+          </section>
+
+
+
+          <!-- ORDER SUMMARY -->
+
+          <section
+            class="bg-white rounded-xl
+                   border border-gray-100
+                   shadow-sm p-6">
+
+            <h2
+              class="text-lg font-bold
+                     text-[#0B2A4A] mb-5">
+
+              Order Summary
+
+            </h2>
+
+
+            <div class="space-y-3">
+
+
+              <div
+                class="flex justify-between
+                       text-sm">
+
+                <span class="text-gray-500">
+                  Subtotal
+                </span>
+
+                <span class="font-medium text-gray-800">
+
+                  ₹{{ currentOrder.subTotal | number:'1.2-2' }}
+
+                </span>
+
+              </div>
+
+
+              <div
+                class="flex justify-between
+                       text-sm">
+
+                <span class="text-gray-500">
+                  Delivery Fee
+                </span>
+
+                <span class="font-medium text-gray-800">
+
+                  ₹{{ currentOrder.deliveryFee | number:'1.2-2' }}
+
+                </span>
+
+              </div>
+
+
+              <div
+                class="border-t border-gray-100
+                       pt-4 mt-4
+                       flex justify-between">
+
+                <span
+                  class="font-bold
+                         text-[#0B2A4A]">
+
+                  Grand Total
+
+                </span>
+
+                <span
+                  class="text-xl font-bold
+                         text-[#FF6A00]">
+
+                  ₹{{ currentOrder.grandTotal | number:'1.2-2' }}
+
+                </span>
+
+              </div>
+
+            </div>
+
+          </section>
+
+        </div>
+
+
+
+        <!-- =================================================
+             ORDER TIMELINE INFORMATION
+        ================================================== -->
+
+        <section
+          class="bg-white rounded-xl
+                 border border-gray-100
+                 shadow-sm p-6">
+
+          <h2
+            class="text-lg font-bold
+                   text-[#0B2A4A] mb-5">
+
+            Order Information
+
+          </h2>
+
+
+          <div
+            class="grid grid-cols-1
+                   sm:grid-cols-2
+                   lg:grid-cols-3
+                   gap-5">
+
+
+            <div>
+
+              <p class="text-xs text-gray-500">
+                Order Number
+              </p>
+
+              <p
+                class="font-semibold
+                       text-gray-800 mt-1">
+
+                {{ currentOrder.orderNumber }}
+
+              </p>
+
+            </div>
+
+
+            <div>
+
+              <p class="text-xs text-gray-500">
+                Created At
+              </p>
+
+              <p
+                class="font-semibold
+                       text-gray-800 mt-1">
+
+                {{ formatDateTime(currentOrder.createdAt) }}
+
+              </p>
+
+            </div>
+
+
+            <div>
+
+              <p class="text-xs text-gray-500">
+                Last Updated
+              </p>
+
+              <p
+                class="font-semibold
+                       text-gray-800 mt-1">
+
+                {{ formatDateTime(currentOrder.updatedAt) }}
+
+              </p>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+      </div>
+
+    }
+
+  </main>
+
+</div>

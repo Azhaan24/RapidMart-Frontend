@@ -1,0 +1,164 @@
+<div class="min-h-screen bg-gray-50">
+
+  <!-- =========================================
+       PAGE HEADER
+  ========================================== -->
+
+  <section class="bg-white border-b">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+      <h1 class="text-3xl font-bold text-gray-900">
+        {{ categoryName() }}
+      </h1>
+
+      <p class="mt-2 text-gray-600">
+        Explore products by sub category
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================
+       CONTENT
+  ========================================== -->
+
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+
+    <!-- =========================================
+         LOADING
+    ========================================== -->
+
+    @if (isLoading()) {
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+
+        @for (item of [1,2,3,4,5,6,7,8]; track item) {
+
+          <div
+            class="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse"
+          >
+
+            <div class="h-48 bg-gray-200"></div>
+
+            <div class="p-4">
+
+              <div
+                class="h-5 bg-gray-200 rounded w-3/4 mx-auto"
+              ></div>
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    }
+
+
+    <!-- =========================================
+         ERROR
+    ========================================== -->
+
+    @else if (errorMessage()) {
+
+      <div class="text-center py-16">
+
+        <p class="text-red-600 text-lg">
+          {{ errorMessage() }}
+        </p>
+
+      </div>
+
+    }
+
+
+    <!-- =========================================
+         EMPTY
+    ========================================== -->
+
+    @else if (subCategories().length === 0) {
+
+      <div class="text-center py-16">
+
+        <div class="text-5xl mb-4">
+          📦
+        </div>
+
+        <h2 class="text-xl font-semibold text-gray-800">
+          No subcategories found
+        </h2>
+
+        <p class="text-gray-500 mt-2">
+          There are currently no subcategories for this category.
+        </p>
+
+      </div>
+
+    }
+
+
+    <!-- =========================================
+         SUBCATEGORY GRID
+    ========================================== -->
+
+    @else {
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+
+        @for (
+          subCategory of subCategories();
+          track subCategory.id
+        ) {
+
+          <a
+            [routerLink]="[
+              '/category',
+              categoryId,
+              'subcategory',
+              subCategory.id
+            ]"
+            class="group block overflow-hidden rounded-xl bg-white shadow-sm hover:shadow-lg transition-all duration-300"
+          >
+
+            <!-- Image -->
+
+            <div class="h-48 overflow-hidden">
+
+              <img
+                [src]="imageBaseUrl + subCategory.imageUrl"
+                [alt]="subCategory.name"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+
+            </div>
+
+
+            <!-- Name -->
+
+            <div class="p-4 text-center">
+
+              <h3
+                class="text-lg font-semibold text-gray-800 group-hover:text-[#f94b1a]"
+              >
+                {{ subCategory.name }}
+              </h3>
+
+            </div>
+
+          </a>
+
+        }
+
+      </div>
+
+    }
+
+  </section>
+
+</div>

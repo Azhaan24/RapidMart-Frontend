@@ -1,0 +1,531 @@
+<div class="min-h-screen bg-[#F8FAFC]">
+
+  <!-- Page Header -->
+  <section class="bg-white border-b border-gray-100">
+
+    <div
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+    >
+
+      <h1 class="text-3xl font-bold text-[#0B2A4A]">
+        My Orders
+      </h1>
+
+      <p class="mt-2 text-gray-600">
+        View and track your current and past orders.
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <main
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+  >
+
+    <!-- Loading -->
+    @if (isLoading()) {
+
+      <div class="space-y-4">
+
+        @for (item of [1, 2, 3]; track item) {
+
+          <div
+            class="bg-white rounded-2xl border border-gray-100 p-6 animate-pulse"
+          >
+
+            <div class="h-5 bg-gray-200 rounded w-48"></div>
+
+            <div
+              class="mt-4 h-4 bg-gray-200 rounded w-72"
+            ></div>
+
+            <div
+              class="mt-4 h-10 bg-gray-200 rounded w-32"
+            ></div>
+
+          </div>
+
+        }
+
+      </div>
+
+    }
+
+
+    <!-- Error -->
+    @else if (errorMessage()) {
+
+      <div
+        class="bg-white rounded-2xl border border-red-100 p-8 text-center"
+      >
+
+        <div
+          class="w-14 h-14 mx-auto rounded-full bg-red-50 flex items-center justify-center"
+        >
+
+          <span class="text-red-500 text-xl font-bold">
+            !
+          </span>
+
+        </div>
+
+        <h2
+          class="mt-4 text-xl font-bold text-[#0B2A4A]"
+        >
+          Unable to load orders
+        </h2>
+
+        <p class="mt-2 text-gray-600">
+          {{ errorMessage() }}
+        </p>
+
+      </div>
+
+    }
+
+
+    <!-- Orders -->
+    @else {
+
+      <!-- No Orders -->
+      @if (currentOrders().length === 0 && pastOrders().length === 0) {
+
+        <div
+          class="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center"
+        >
+
+          <div
+            class="w-20 h-20 mx-auto rounded-full bg-gray-100 flex items-center justify-center"
+          >
+
+            <svg
+              class="w-10 h-10 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"
+              />
+
+            </svg>
+
+          </div>
+
+          <h2
+            class="mt-5 text-2xl font-bold text-[#0B2A4A]"
+          >
+            No orders yet
+          </h2>
+
+          <p class="mt-2 text-gray-600">
+            Your orders will appear here after you place an order.
+          </p>
+
+          <button
+            type="button"
+            (click)="goToHome()"
+            class="mt-6 px-6 py-3 rounded-lg bg-[#FF6A00] text-white font-semibold hover:bg-[#e85f00] transition cursor-pointer"
+          >
+            Start Shopping
+          </button>
+
+        </div>
+
+      }
+
+
+      @else {
+
+        <!-- Current Orders -->
+        @if (getCurrentOrders().length > 0) {
+
+          <section>
+
+            <div
+                  class="bg-white rounded-2xl border border-[#062446] shadow-sm p-6"
+                >
+
+            <div class="flex items-center justify-between mb-5">
+
+              <div>
+
+                <h2
+                  class="text-xl font-bold text-[#0B2A4A]"
+                >
+                  Current Orders
+                </h2>
+
+                <p class="mt-1 text-sm text-gray-500">
+                  Orders that are currently being processed or delivered.
+                </p>
+
+              </div>
+
+              <span
+                class="px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-sm font-semibold"
+              >
+                {{ currentOrdersCount() }}
+              </span>
+
+            </div>
+
+
+            <div class="space-y-4">
+
+              @for (
+                order of getCurrentOrders();
+                track order.id
+              ) {
+
+                <div
+                  class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+                >
+
+                  <!-- Top -->
+                  <div
+                    class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                  >
+
+                    <div>
+
+                      <p class="text-sm text-gray-500">
+                        Order Number
+                      </p>
+
+                      <h3
+                        class="mt-1 text-lg font-bold text-[#0B2A4A]"
+                      >
+                        {{ order.orderNumber }}
+                      </h3>
+
+                    </div>
+
+
+                    <span
+                      class="self-start sm:self-auto px-3 py-1.5 rounded-full text-sm font-semibold"
+                      [class]="getStatusClass(getDisplayStatus(order))"
+                    >
+                      {{ getStatusLabel(getDisplayStatus(order)) }}
+                    </span>
+
+                  </div>
+
+
+                  <!-- Details -->
+                  <div
+                    class="mt-5 grid grid-cols-2 md:grid-cols-4 gap-4"
+                  >
+
+                    <div>
+
+                      <p class="text-xs text-gray-500">
+                        Order Date
+                      </p>
+
+                      <p class="mt-1 text-sm font-medium text-gray-800">
+                        {{ order.createdAt | date:'mediumDate' }}
+                      </p>
+
+                    </div>
+
+
+                    <div>
+
+                      <p class="text-xs text-gray-500">
+                        Items
+                      </p>
+
+                      <p class="mt-1 text-sm font-medium text-gray-800">
+                        {{ order.items.length }}
+                      </p>
+
+                    </div>
+
+
+                    <div>
+
+                      <p class="text-xs text-gray-500">
+                        Payment
+                      </p>
+
+                      <p class="mt-1 text-sm font-medium text-gray-800">
+                        {{ order.paymentMethod === 4 ? 'COD' : 'Online' }}
+                      </p>
+
+                    </div>
+
+
+                    <div>
+
+                      <p class="text-xs text-gray-500">
+                        Total
+                      </p>
+
+                      <p class="mt-1 text-sm font-bold text-[#FF6A00]">
+                        {{ order.grandTotal | currency:'INR':'symbol':'1.2-2' }}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+
+                  <!-- Button -->
+                  <div
+                    class="mt-5 pt-5 border-t border-gray-100 flex justify-end"
+                  >
+
+                    <button
+                      type="button"
+                      (click)="viewOrder(order.id)"
+                      class="px-5 py-2.5 rounded-lg bg-[#0B2A4A] text-white font-semibold hover:bg-[#123B63] transition cursor-pointer"
+                    >
+                      View Details
+                    </button>
+
+                  </div>
+
+                </div>
+
+              }
+
+            </div>
+
+            @if (!isLoading() && currentOrdersTotalPages() > 0)
+            {
+              <div class="flex items-center justify-center gap-4 mt-6 pb-4">
+                <button
+                type="button"
+                (click)="goToCurrentOrdersPreviousPage()"
+                [disabled]="!currentOrdersHasPreviousPage()"
+                class="px-4 py-2 rounded-lg border border-gray-300 hover:cursor-pointer
+                disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                
+                Previous
+              
+              </button>
+              
+              <span class="text-sm text-gray-600">
+                
+                Page {{ currentOrdersPageNumber() }} of {{ currentOrdersTotalPages() }} · {{ currentOrdersTotalCount() }}
+              
+              </span>
+              <button
+               type="button"
+               (click)="goToCurrentOrdersNextPage()"
+               [disabled]="!currentOrdersHasNextPage()"
+               class="px-4 py-2 rounded-lg border border-gray-300 hover: cursor-pointer
+               disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+              
+               Next
+              
+              </button>
+            </div>
+          }
+            </div>
+
+          </section>
+
+        }
+
+
+        <!-- Past Orders -->
+        @if (getPastOrders().length > 0) {
+
+          <section class="mt-10">
+
+            <div
+                  class="bg-white rounded-2xl border border-[#062446] shadow-sm p-6"
+                >
+
+            <div class="flex items-center justify-between mb-5">
+
+              <div>
+
+                <h2
+                  class="text-xl font-bold text-[#0B2A4A]"
+                >
+                  Past Orders
+                </h2>
+
+                <p class="mt-1 text-sm text-gray-500">
+                  Your completed, cancelled, and returned orders.
+                </p>
+
+              </div>
+
+              <span
+                class="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-sm font-semibold"
+              >
+                {{ pastOrdersCount() }}
+              </span>
+
+            </div>
+
+
+            <div class="space-y-4">
+
+              @for ( order of getPastOrders(); track order.id )
+              {
+
+                <div
+                  class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+                >
+
+                  <div
+                    class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                  >
+
+                    <div>
+
+                      <p class="text-sm text-gray-500">
+                        Order Number
+                      </p>
+
+                      <h3
+                        class="mt-1 text-lg font-bold text-[#0B2A4A]"
+                      >
+                        {{ order.orderNumber }}
+                      </h3>
+
+                    </div>
+
+
+                    <span
+                      class="self-start sm:self-auto px-3 py-1.5 rounded-full text-sm font-semibold"
+                      [class]="getStatusClass(getDisplayStatus(order))"
+                    >
+                      {{ getStatusLabel(getDisplayStatus(order)) }}
+                    </span>
+
+                  </div>
+
+
+                  <div
+                    class="mt-5 grid grid-cols-2 md:grid-cols-4 gap-4"
+                  >
+
+                    <div>
+
+                      <p class="text-xs text-gray-500">
+                        Order Date
+                      </p>
+
+                      <p class="mt-1 text-sm font-medium text-gray-800">
+                        {{ order.createdAt | date:'mediumDate' }}
+                      </p>
+
+                    </div>
+
+
+                    <div>
+
+                      <p class="text-xs text-gray-500">
+                        Items
+                      </p>
+
+                      <p class="mt-1 text-sm font-medium text-gray-800">
+                        {{ order.items.length }}
+                      </p>
+
+                    </div>
+
+
+                    <div>
+
+                      <p class="text-xs text-gray-500">
+                        Payment
+                      </p>
+
+                      <p class="mt-1 text-sm font-medium text-gray-800">
+                        {{ order.paymentMethod === 4 ? 'COD' : 'Online' }}
+                      </p>
+
+                    </div>
+
+
+                    <div>
+
+                      <p class="text-xs text-gray-500">
+                        Total
+                      </p>
+
+                      <p class="mt-1 text-sm font-bold text-[#FF6A00]">
+                        {{ order.grandTotal | currency:'INR':'symbol':'1.2-2' }}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+
+                  <div
+                    class="mt-5 pt-5 border-t border-gray-100 flex justify-end"
+                  >
+
+                    <button
+                      type="button"
+                      (click)="viewOrder(order.id)"
+                      class="px-5 py-2.5 rounded-lg border border-[#0B2A4A] text-[#0B2A4A] font-semibold hover:bg-[#0B2A4A] hover:text-white transition cursor-pointer"
+                    >
+                      View Details
+                    </button>
+
+                  </div>
+
+                </div>
+
+              }
+
+            </div>
+            @if (!isLoading() && pastOrdersTotalPages() > 0)
+            {
+              <div class="flex items-center justify-center gap-4 mt-6 pb-4">
+                <button
+                 type="button"
+                 (click)="goToPastOrdersPreviousPage()"
+                 [disabled]="!pastOrdersHasPreviousPage()"
+                 class="px-4 py-2 rounded-lg border border-gray-300 hover:cursor-pointer
+                 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                
+                 Previous
+                
+                </button>
+                
+                <span class="text-sm text-gray-600">
+                  
+                  Page {{ pastOrdersPageNumber() }} of {{ pastOrdersTotalPages() }} · {{ pastOrdersTotalCount() }}
+                
+                </span>
+                <button
+                 type="button"
+                 (click)="goToPastOrdersNextPage()"
+                 [disabled]="!pastOrdersHasNextPage()"
+                 class="px-4 py-2 rounded-lg border border-gray-300 hover: cursor-pointer
+                 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                
+                 Next
+                
+                </button>
+              </div>
+            }
+            </div>
+
+          </section>
+
+        }
+      }
+    }
+  </main>
+</div>

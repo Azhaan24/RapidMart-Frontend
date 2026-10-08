@@ -1,0 +1,40 @@
+:host {
+  display: block;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.profile-row:last-child {
+  border-bottom: none;
+}
+
+.profile-label {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.profile-value {
+  color: #0B2A4A;
+  font-weight: 600;
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+
+  .profile-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .profile-value {
+    text-align: left;
+  }
+}

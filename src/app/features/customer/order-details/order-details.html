@@ -1,0 +1,1662 @@
+<div class="min-h-screen bg-[#F8FAFC]">
+
+  <!-- ==============================
+       LOADING
+  =============================== -->
+
+  @if (isLoading()) {
+
+    <div class="min-h-[70vh] flex items-center justify-center">
+
+      <div class="text-center">
+
+        <div
+          class="w-12 h-12 border-4 border-gray-200 border-t-[#FF6A00] rounded-full animate-spin mx-auto"
+        ></div>
+
+        <p class="mt-4 text-gray-600">
+          Loading order details...
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+  <!-- ==============================
+       ERROR
+  =============================== -->
+
+  @else if (errorMessage()) {
+
+    <main class="max-w-3xl mx-auto px-4 py-16">
+
+      <div
+        class="bg-white rounded-2xl border border-red-100 shadow-sm p-8 text-center"
+      >
+
+        <div
+          class="w-16 h-16 mx-auto rounded-full bg-red-50 flex items-center justify-center"
+        >
+
+          <span
+            class="text-2xl font-bold text-red-500"
+          >
+            !
+          </span>
+
+        </div>
+
+        <h1
+          class="mt-5 text-2xl font-bold text-[#0B2A4A]"
+        >
+          Unable to load order
+        </h1>
+
+        <p class="mt-2 text-gray-600">
+          {{ errorMessage() }}
+        </p>
+
+        <button
+          type="button"
+          (click)="goBackToOrders()"
+          class="mt-6 px-6 py-3 rounded-lg bg-[#0B2A4A] text-white font-semibold hover:bg-[#123B63] transition cursor-pointer"
+        >
+          Back to My Orders
+        </button>
+
+      </div>
+
+    </main>
+
+  }
+
+  <!-- ==============================
+       ORDER
+  =============================== -->
+
+  @else if (order(); as order) {
+
+    <!-- ==============================
+         HEADER
+    =============================== -->
+
+    <section class="bg-white border-b border-gray-100">
+
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+      >
+
+        <!-- Back Button -->
+
+        <button
+          type="button"
+          (click)="goBackToOrders()"
+          class="inline-flex items-center gap-2 text-sm font-semibold text-[#0B2A4A] hover:text-[#FF6A00] transition cursor-pointer"
+        >
+
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"
+            />
+
+          </svg>
+
+          Back to My Orders
+
+        </button>
+
+
+        <!-- Order Header -->
+
+        <div
+          class="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+        >
+
+          <div>
+
+            <p class="text-sm text-gray-500">
+              Order Number
+            </p>
+
+            <h1
+              class="mt-1 text-3xl font-bold text-[#0B2A4A]"
+            >
+              {{ order.orderNumber }}
+            </h1>
+
+            <p class="mt-2 text-sm text-gray-500">
+              Placed on {{ order.createdAt | date:'medium' }}
+            </p>
+
+          </div>
+
+
+          <!-- Current Status -->
+
+          @if(returnStatus() !== 0)
+          {
+            <span
+            class="self-start md:self-auto px-4 py-2 rounded-full text-sm font-bold"
+            [class]="getStatusClass(returnStatus())"
+          >
+            {{ getStatusLabel(returnStatus()) }}
+          </span>
+          }
+          @else
+          {
+            <span
+            class="self-start md:self-auto px-4 py-2 rounded-full text-sm font-bold"
+            [class]="getStatusClass(order.status)"
+          >
+            {{ getStatusLabel(order.status) }}
+          </span>
+          }
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==============================
+         MAIN CONTENT
+    =============================== -->
+
+    <main
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+    >
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+
+        <!-- ==========================================
+             LEFT COLUMN
+        =========================================== -->
+
+        <div class="lg:col-span-2 space-y-6">
+
+
+          <!-- ==============================
+               ORDER STATUS TIMELINE
+          =============================== -->
+
+          @if (!isCancelledOrder() && !isReturnStatus()) {
+
+            <section
+              class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+            >
+
+              <div class="mb-6"t>
+
+                <h2
+                  class="text-lg font-bold text-[#0B2A4A]"
+                >
+                  Order Status
+                </h2>
+
+                <p class="text-sm text-gray-500 mt-1">
+                  Track the progress of your order
+                </p>
+
+              </div>
+
+
+              <div class="space-y-6">
+
+
+                <!-- ==============================
+                     ORDER PLACED
+                =============================== -->
+
+                <div class="flex items-start gap-4">
+
+                  <div
+                    class="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+
+                    [class.bg-green-100]="
+                      isStatusCompleted(
+                        OrderStatus.Pending,
+                        order.status
+                      )
+                    "
+
+                    [class.text-green-600]="
+                      isStatusCompleted(
+                        OrderStatus.Pending,
+                        order.status
+                      )
+                    "
+
+                    [class.bg-[#FF6A00]]="
+                      isCurrentStatus(
+                        OrderStatus.Pending,
+                        order.status
+                      )
+                    "
+
+                    [class.text-white]="
+                      isCurrentStatus(
+                        OrderStatus.Pending,
+                        order.status
+                      )
+                    "
+
+                    [class.bg-gray-100]="
+                      !isStatusCompleted(
+                        OrderStatus.Pending,
+                        order.status
+                      ) &&
+                      !isCurrentStatus(
+                        OrderStatus.Pending,
+                        order.status
+                      )
+                    "
+
+                    [class.text-gray-400]="
+                      !isStatusCompleted(
+                        OrderStatus.Pending,
+                        order.status
+                      ) &&
+                      !isCurrentStatus(
+                        OrderStatus.Pending,
+                        order.status
+                      )
+                    "
+                  >
+
+                    @if (
+                      isStatusCompleted(
+                        OrderStatus.Pending,
+                        order.status
+                      )
+                    ) {
+
+                      ✓
+
+                    } @else {
+
+                      1
+
+                    }
+
+                  </div>
+
+
+                  <div>
+
+                    <h3 class="font-semibold text-gray-800">
+                      Order Placed
+                    </h3>
+
+                    <p class="text-sm text-gray-500">
+                      Your order has been placed successfully.
+                    </p>
+
+                  </div>
+
+                </div>
+
+
+                <!-- ==============================
+                     CONFIRMED
+                =============================== -->
+
+                <div class="flex items-start gap-4">
+
+                  <div
+                    class="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+
+                    [class.bg-green-100]="
+                      isStatusCompleted(
+                        OrderStatus.Confirmed,
+                        order.status
+                      )
+                    "
+
+                    [class.text-green-600]="
+                      isStatusCompleted(
+                        OrderStatus.Confirmed,
+                        order.status
+                      )
+                    "
+
+                    [class.bg-[#FF6A00]]="
+                      isCurrentStatus(
+                        OrderStatus.Confirmed,
+                        order.status
+                      )
+                    "
+
+                    [class.text-white]="
+                      isCurrentStatus(
+                        OrderStatus.Confirmed,
+                        order.status
+                      )
+                    "
+
+                    [class.bg-gray-100]="
+                      !isStatusCompleted(
+                        OrderStatus.Confirmed,
+                        order.status
+                      ) &&
+                      !isCurrentStatus(
+                        OrderStatus.Confirmed,
+                        order.status
+                      )
+                    "
+
+                    [class.text-gray-400]="
+                      !isStatusCompleted(
+                        OrderStatus.Confirmed,
+                        order.status
+                      ) &&
+                      !isCurrentStatus(
+                        OrderStatus.Confirmed,
+                        order.status
+                      )
+                    "
+                  >
+
+                    @if (
+                      isStatusCompleted(
+                        OrderStatus.Confirmed,
+                        order.status
+                      )
+                    ) {
+
+                      ✓
+
+                    } @else {
+
+                      2
+
+                    }
+
+                  </div>
+
+
+                  <div>
+
+                    <h3 class="font-semibold text-gray-800">
+                      Order Confirmed
+                    </h3>
+
+                    <p class="text-sm text-gray-500">
+                      Your order has been confirmed.
+                    </p>
+
+                  </div>
+
+                </div>
+
+
+                <!-- ==============================
+                     PROCESSING
+                =============================== -->
+
+                <div class="flex items-start gap-4">
+
+                  <div
+                    class="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+
+                    [class.bg-green-100]="
+                      isStatusCompleted(
+                        OrderStatus.Processing,
+                        order.status
+                      )
+                    "
+
+                    [class.text-green-600]="
+                      isStatusCompleted(
+                        OrderStatus.Processing,
+                        order.status
+                      )
+                    "
+
+                    [class.bg-[#FF6A00]]="
+                      isCurrentStatus(
+                        OrderStatus.Processing,
+                        order.status
+                      )
+                    "
+
+                    [class.text-white]="
+                      isCurrentStatus(
+                        OrderStatus.Processing,
+                        order.status
+                      )
+                    "
+
+                    [class.bg-gray-100]="
+                      !isStatusCompleted(
+                        OrderStatus.Processing,
+                        order.status
+                      ) &&
+                      !isCurrentStatus(
+                        OrderStatus.Processing,
+                        order.status
+                      )
+                    "
+
+                    [class.text-gray-400]="
+                      !isStatusCompleted(
+                        OrderStatus.Processing,
+                        order.status
+                      ) &&
+                      !isCurrentStatus(
+                        OrderStatus.Processing,
+                        order.status
+                      )
+                    "
+                  >
+
+                    @if (
+                      isStatusCompleted(
+                        OrderStatus.Processing,
+                        order.status
+                      )
+                    ) {
+
+                      ✓
+
+                    } @else {
+
+                      3
+
+                    }
+
+                  </div>
+
+
+                  <div>
+
+                    <h3 class="font-semibold text-gray-800">
+                      Processing
+                    </h3>
+
+                    <p class="text-sm text-gray-500">
+                      Your order is being prepared.
+                    </p>
+
+                  </div>
+
+                </div>
+
+
+                <!-- ==============================
+                     OUT FOR DELIVERY
+                =============================== -->
+
+                <div class="flex items-start gap-4">
+
+                  <div
+                    class="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+
+                    [class.bg-green-100]="
+                      isStatusCompleted(
+                        OrderStatus.OutForDelivery,
+                        order.status
+                      )
+                    "
+
+                    [class.text-green-600]="
+                      isStatusCompleted(
+                        OrderStatus.OutForDelivery,
+                        order.status
+                      )
+                    "
+
+                    [class.bg-[#FF6A00]]="
+                      isCurrentStatus(
+                        OrderStatus.OutForDelivery,
+                        order.status
+                      )
+                    "
+
+                    [class.text-white]="
+                      isCurrentStatus(
+                        OrderStatus.OutForDelivery,
+                        order.status
+                      )
+                    "
+
+                    [class.bg-gray-100]="
+                      !isStatusCompleted(
+                        OrderStatus.OutForDelivery,
+                        order.status
+                      ) &&
+                      !isCurrentStatus(
+                        OrderStatus.OutForDelivery,
+                        order.status
+                      )
+                    "
+
+                    [class.text-gray-400]="
+                      !isStatusCompleted(
+                        OrderStatus.OutForDelivery,
+                        order.status
+                      ) &&
+                      !isCurrentStatus(
+                        OrderStatus.OutForDelivery,
+                        order.status
+                      )
+                    "
+                  >
+
+                    @if (
+                      isStatusCompleted(
+                        OrderStatus.OutForDelivery,
+                        order.status
+                      )
+                    ) {
+
+                      ✓
+
+                    } @else {
+
+                      4
+
+                    }
+
+                  </div>
+
+
+                  <div>
+
+                    <h3 class="font-semibold text-gray-800">
+                      Out for Delivery
+                    </h3>
+
+                    <p class="text-sm text-gray-500">
+                      Your order is on the way.
+                    </p>
+
+                  </div>
+
+                </div>
+
+
+                <!-- ==============================
+                     DELIVERED
+                =============================== -->
+
+                <div class="flex items-start gap-4">
+
+                  <div
+                    class="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+
+                    [class.bg-green-100]="
+                      isStatusCompleted(
+                        OrderStatus.Delivered,
+                        order.status
+                      )
+                    "
+
+                    [class.text-green-600]="
+                      isStatusCompleted(
+                        OrderStatus.Delivered,
+                        order.status
+                      )
+                    "
+
+                    [class.bg-[#FF6A00]]="
+                      isCurrentStatus(
+                        OrderStatus.Delivered,
+                        order.status
+                      )
+                    "
+
+                    [class.text-white]="
+                      isCurrentStatus(
+                        OrderStatus.Delivered,
+                        order.status
+                      )
+                    "
+
+                    [class.bg-gray-100]="
+                      !isStatusCompleted(
+                        OrderStatus.Delivered,
+                        order.status
+                      ) &&
+                      !isCurrentStatus(
+                        OrderStatus.Delivered,
+                        order.status
+                      )
+                    "
+
+                    [class.text-gray-400]="
+                      !isStatusCompleted(
+                        OrderStatus.Delivered,
+                        order.status
+                      ) &&
+                      !isCurrentStatus(
+                        OrderStatus.Delivered,
+                        order.status
+                      )
+                    "
+                  >
+
+                    @if (
+                      isStatusCompleted(
+                        OrderStatus.Delivered,
+                        order.status
+                      )
+                    ) {
+
+                      ✓
+
+                    } @else {
+
+                      5
+
+                    }
+
+                  </div>
+
+
+                  <div>
+
+                    <h3 class="font-semibold text-gray-800">
+                      Delivered
+                    </h3>
+
+                    <p class="text-sm text-gray-500">
+                      Your order has been delivered.
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </section>
+
+          }
+
+
+          <!-- ==============================
+               CANCELLED ORDER
+          =============================== -->
+
+          @if (isCancelledOrder()) {
+
+            <section
+              class="bg-white rounded-2xl border border-red-100 shadow-sm p-6"
+            >
+
+              <div class="flex items-start gap-4">
+
+                <div
+                  class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0 font-bold"
+                >
+                  ×
+                </div>
+
+                <div>
+
+                  <h2
+                    class="text-lg font-bold text-red-700"
+                  >
+                    Order Cancelled
+                  </h2>
+
+                  <p class="mt-1 text-sm text-gray-500">
+                    This order has been cancelled.
+                  </p>
+
+                </div>
+
+              </div>
+
+            </section>
+
+          }
+
+
+          <!-- ==============================
+               RETURN STATUS
+          =============================== -->
+
+          @if (isReturnStatus()) {
+  <section class="mb-8">
+    <div class="bg-white border border-orange-200 rounded-2xl shadow-sm overflow-hidden">
+
+      <!-- Header -->
+      <div class="px-6 py-5 bg-orange-50 border-b border-orange-100">
+        <div class="flex items-start gap-4">
+
+          <div
+            class="w-11 h-11 rounded-full bg-orange-100
+                   flex items-center justify-center shrink-0"
+          >
+            <svg
+              class="w-6 h-6 text-orange-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 14l-4-4m0 0l4-4m-4 4h11a4 4 0 014 4v1"
+              />
+            </svg>
+          </div>
+
+          <div>
+            <h2 class="text-lg font-bold text-[#0B2A4A]">
+              Return Status
+            </h2>
+
+            <p class="text-sm text-gray-500 mt-1">
+              Your return request is being processed.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Status Body -->
+      <div class="p-6">
+
+        <!-- Status -->
+        <div class="flex items-center justify-between gap-4 mb-6">
+
+          <div>
+            <p class="text-sm text-gray-500">
+              Current Status
+            </p>
+
+            <p
+              class="text-lg font-bold mt-1"
+              [class.text-orange-600]="returnStatus() === OrderStatus.ReturnRequested"
+              [class.text-green-600]="returnStatus() === OrderStatus.ReturnApproved || returnStatus() === OrderStatus.Returned"
+              [class.text-red-600]="returnStatus() === OrderStatus.ReturnRejected"
+            >
+              {{ getStatusLabel(returnStatus()) }}
+            </p>
+          </div>
+
+          <span
+            class="inline-flex items-center px-3 py-1.5 rounded-full
+                   text-sm font-semibold"
+            [ngClass]="getStatusClass(returnStatus())"
+          >
+            {{ getStatusLabel(returnStatus()) }}
+          </span>
+
+        </div>
+
+        <!-- Return Timeline -->
+        <div class="space-y-5">
+
+          <!-- Return Requested -->
+          <div class="flex gap-4">
+
+            <div class="flex flex-col items-center">
+
+              <div
+                class="w-9 h-9 rounded-full bg-orange-100
+                       flex items-center justify-center"
+              >
+                <svg
+                  class="w-5 h-5 text-orange-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 2"
+                  />
+                </svg>
+              </div>
+
+              <div class="w-px h-full bg-gray-200 mt-2"></div>
+
+            </div>
+
+            <div class="pb-4">
+              <p class="font-semibold text-gray-800">
+                Return Requested
+              </p>
+
+              <p class="text-sm text-gray-500 mt-1">
+                Your return request has been submitted successfully.
+              </p>
+            </div>
+
+          </div>
+
+          <!-- Approved -->
+          @if (
+            returnStatus() === OrderStatus.ReturnApproved ||
+            returnStatus() === OrderStatus.Returned
+          ) {
+            <div class="flex gap-4">
+
+              <div class="flex flex-col items-center">
+
+                <div
+                  class="w-9 h-9 rounded-full bg-green-100
+                         flex items-center justify-center"
+                >
+                  <svg
+                    class="w-5 h-5 text-green-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+
+                <div class="w-px h-full bg-gray-200 mt-2"></div>
+
+              </div>
+
+              <div class="pb-4">
+                <p class="font-semibold text-gray-800">
+                  Return Approved
+                </p>
+
+                <p class="text-sm text-gray-500 mt-1">
+                  Your return request has been approved.
+                </p>
+
+              </div>
+
+            </div>
+          }
+
+          <!-- Rejected -->
+          @if (returnStatus() === OrderStatus.ReturnRejected) {
+            <div class="flex gap-4">
+
+              <div
+                class="w-9 h-9 rounded-full bg-red-100
+                       flex items-center justify-center shrink-0"
+              >
+                <svg
+                  class="w-5 h-5 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </div>
+
+              <div>
+                <p class="font-semibold text-gray-800">
+                  Return Rejected
+                </p>
+
+                <p class="text-sm text-gray-500 mt-1">
+                  Your return request was not approved.
+                </p>
+
+              </div>
+
+            </div>
+          }
+
+          <!-- Returned -->
+          @if (returnStatus() === OrderStatus.Returned) {
+            <div class="flex gap-4">
+
+              <div
+                class="w-9 h-9 rounded-full bg-green-100
+                       flex items-center justify-center shrink-0"
+              >
+                <svg
+                  class="w-5 h-5 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+
+              <div>
+                <p class="font-semibold text-gray-800">
+                  Return Received
+                </p>
+
+                <p class="text-sm text-gray-500 mt-1">
+                  Your returned item has been received by RapidMart.
+                </p>
+
+              </div>
+
+            </div>
+          }
+
+        </div>
+
+        <!-- Manager Notes -->
+        @if (returnStatus() === OrderStatus.ReturnRejected) {
+          <div class="mt-6 p-4 bg-red-50 border border-red-100 rounded-xl">
+
+            <p class="text-sm font-semibold text-red-800">
+              Return Information
+            </p>
+
+            <p class="text-sm text-red-700 mt-1">
+              Your return request was rejected. Please contact customer support
+              if you need more information.
+            </p>
+
+          </div>
+        }
+
+      </div>
+    </div>
+  </section>
+}
+
+
+          <!-- ==============================
+               RETURN SUCCESS MESSAGE
+          =============================== -->
+
+          @if (returnSuccessMessage()) {
+
+            <section
+              class="bg-white rounded-2xl border border-green-100 shadow-sm p-6"
+            >
+
+              <div class="flex items-start gap-4">
+
+                <div
+                  class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0 font-bold"
+                >
+                  ✓
+                </div>
+
+                <div>
+
+                  <h2
+                    class="text-lg font-bold text-green-700"
+                  >
+                    Return Request Submitted
+                  </h2>
+
+                  <p class="mt-1 text-sm text-gray-600">
+                    {{ returnSuccessMessage() }}
+                  </p>
+
+                </div>
+
+              </div>
+
+            </section>
+
+          }
+
+
+          <!-- ==============================
+               ORDER ITEMS
+          =============================== -->
+
+          <section
+            class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+          >
+
+            <div
+              class="px-6 py-5 border-b border-gray-100"
+            >
+
+              <h2
+                class="text-lg font-bold text-[#0B2A4A]"
+              >
+                Order Items
+              </h2>
+
+            </div>
+
+
+            <div class="divide-y divide-gray-100">
+
+              @for (
+                item of order.items;
+                track item.id
+              ) {
+
+                <div
+                  class="p-5 flex items-center gap-4"
+                >
+
+                  <!-- Image -->
+
+                  <div
+                    class="w-20 h-20 rounded-xl bg-gray-50 overflow-hidden shrink-0"
+                  >
+
+                    @if (item.imageUrl) {
+
+                      <img
+                        [src]="imageBaseUrl + item.imageUrl"
+                        [alt]="item.itemName"
+                        class="w-full h-full object-cover"
+                      />
+
+                    } @else {
+
+                      <div
+                        class="w-full h-full flex items-center justify-center text-xs text-gray-400"
+                      >
+                        No Image
+                      </div>
+
+                    }
+
+                  </div>
+
+
+                  <!-- Item Details -->
+
+                  <div class="flex-1 min-w-0">
+
+                    <h3
+                      class="font-semibold text-gray-900"
+                    >
+                      {{ item.itemName }}
+                    </h3>
+
+                    <p
+                      class="mt-1 text-sm text-gray-500"
+                    >
+                      Quantity: {{ item.quantity }}
+                    </p>
+
+                    <p
+                      class="mt-1 text-sm text-gray-500"
+                    >
+                      {{ item.unitPrice | currency:'INR':'symbol':'1.2-2' }}
+                      each
+                    </p>
+
+                  </div>
+
+
+                  <!-- Item Total -->
+
+                  <div class="text-right">
+
+                    <p
+                      class="font-bold text-[#0B2A4A]"
+                    >
+                      {{ item.totalAmount | currency:'INR':'symbol':'1.2-2' }}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              }
+
+            </div>
+
+          </section>
+
+
+          <!-- ==============================
+               SHIPPING INFORMATION
+          =============================== -->
+
+          <section
+            class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+          >
+
+            <h2
+              class="text-lg font-bold text-[#0B2A4A]"
+            >
+              Shipping Information
+            </h2>
+
+
+            <div class="mt-5">
+
+              <p
+                class="text-sm font-semibold text-gray-700"
+              >
+                Delivery Address
+              </p>
+
+              <p
+                class="mt-2 text-gray-600 leading-relaxed whitespace-pre-line"
+              >
+                {{ order.shippingAddress }}
+              </p>
+
+            </div>
+
+
+            @if (order.customerNotes) {
+
+              <div
+                class="mt-5 pt-5 border-t border-gray-100"
+              >
+
+                <p
+                  class="text-sm font-semibold text-gray-700"
+                >
+                  Order Notes
+                </p>
+
+                <p class="mt-2 text-gray-600">
+                  {{ order.customerNotes }}
+                </p>
+
+              </div>
+
+            }
+
+          </section>
+
+
+          <!-- ==============================
+               PAYMENT INFORMATION
+          =============================== -->
+
+          <section
+            class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+          >
+
+            <h2
+              class="text-lg font-bold text-[#0B2A4A]"
+            >
+              Payment Information
+            </h2>
+
+
+            <div
+              class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-5"
+            >
+
+              <div>
+
+                <p class="text-sm text-gray-500">
+                  Payment Method
+                </p>
+
+                <p
+                  class="mt-1 font-semibold text-gray-800"
+                >
+                  {{ getPaymentMethodLabel(order.paymentMethod) }}
+                </p>
+
+              </div>
+
+
+              <div>
+
+               @if(returnStatus()!==0)
+               {
+                <p class="text-sm text-gray-500">
+                  Refund Status
+                </p>
+               }
+               @else
+               {
+                <p class="text-sm text-gray-500">
+                  Payment Status
+                </p>
+               }
+
+                @if(returnStatus()!==0)
+                {
+                  <p
+                  class="mt-1 font-semibold text-gray-800"
+                >
+                  {{ getPaymentStatusLabel(refundStatus()) }}
+                </p>
+                }
+                @else
+                {
+                  <p
+                  class="mt-1 font-semibold text-gray-800"
+                >
+                  {{ getPaymentStatusLabel(order.paymentStatus) }}
+                </p>
+                }
+
+              </div>
+
+            </div>
+
+          </section>
+
+        </div>
+
+
+        <!-- ==========================================
+             RIGHT COLUMN
+        =========================================== -->
+
+        <aside>
+
+          <div
+            class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 lg:sticky lg:top-6"
+          >
+
+            <h2
+              class="text-lg font-bold text-[#0B2A4A]"
+            >
+              Order Summary
+            </h2>
+
+
+            <div class="mt-5 space-y-3">
+
+              <!-- Subtotal -->
+
+              <div
+                class="flex justify-between text-gray-600"
+              >
+
+                <span>
+                  Subtotal
+                </span>
+
+                <span>
+                  {{ order.subTotal | currency:'INR':'symbol':'1.2-2' }}
+                </span>
+
+              </div>
+
+
+              <!-- Delivery -->
+
+              <div
+                class="flex justify-between text-gray-600"
+              >
+
+                <span>
+                  Delivery
+                </span>
+
+                @if (order.deliveryFee === 0) {
+
+                  <span
+                    class="text-green-600 font-medium"
+                  >
+                    Free
+                  </span>
+
+                } @else {
+
+                  <span>
+                    {{ order.deliveryFee | currency:'INR':'symbol':'1.2-2' }}
+                  </span>
+
+                }
+
+              </div>
+
+
+              <!-- Total -->
+
+              <div
+                class="pt-4 border-t border-gray-200"
+              >
+
+                <div
+                  class="flex justify-between items-center"
+                >
+
+                  <span
+                    class="text-lg font-bold text-gray-900"
+                  >
+                    Total
+                  </span>
+
+                  <span
+                    class="text-xl font-bold text-[#FF6A00]"
+                  >
+                    {{ order.grandTotal | currency:'INR':'symbol':'1.2-2' }}
+                  </span>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <!-- ==============================
+                 CUSTOMER ACTIONS
+            =============================== -->
+
+            <div class="mt-6 pt-6 border-t border-gray-100">
+
+              <!-- Cancel Order -->
+
+              @if (
+                order.status === OrderStatus.Pending ||
+                order.status === OrderStatus.Confirmed ||
+                order.status === OrderStatus.Processing ||
+                order.status === OrderStatus.OutForDelivery
+              ) {
+
+                <button
+                  type="button"
+                  (click)="cancelOrder()"
+                  [disabled]="isCancelling()"
+                  class="w-full px-5 py-3 rounded-lg border border-red-200 text-red-600 font-semibold hover:bg-red-50 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+
+                  @if (isCancelling()) {
+
+                    Cancelling Order...
+
+                  } @else {
+
+                    Cancel Order
+
+                  }
+
+                </button>
+
+              }
+
+
+              <!-- Request Return -->
+
+              @if (order.status === OrderStatus.Delivered && !returnRequest()) {
+
+                <button
+                  type="button"
+                  (click)="openReturnForm()"
+                  [disabled]="isSubmittingReturn()"
+                  class="w-full mt-3 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg border border-orange-500 text-orange-600 font-semibold hover:bg-orange-50 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 14l-4-4m0 0l4-4m-4 4h11a4 4 0 014 4v1"
+                    />
+
+                  </svg>
+
+                  Request Return
+
+                </button>
+
+              }
+
+            </div>
+
+
+            <!-- Continue Shopping -->
+
+            <button
+              type="button"
+              (click)="goToHome()"
+              class="w-full mt-3 px-5 py-3 rounded-lg border border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition cursor-pointer"
+            >
+              Continue Shopping
+            </button>
+
+          </div>
+
+        </aside>
+
+      </div>
+
+    </main>
+@if (isReturnFormOpen()) {
+
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+
+    <div class="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-xl">
+
+      <!-- Header -->
+      <div class="flex items-start justify-between gap-4 p-6 border-b border-gray-200">
+
+        <div>
+          <h2 class="text-xl font-bold text-[#0B2A4A]">
+            Request Return
+          </h2>
+
+          <p class="text-sm text-gray-500 mt-1">
+            Select the item(s) and quantity you want to return.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          (click)="isReturnFormOpen.set(false)"
+          [disabled]="isSubmittingReturn()"
+          class="text-gray-400 hover:text-gray-700 text-2xl cursor-pointer disabled:cursor-not-allowed"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <!-- Body -->
+      <div class="p-6">
+
+        <!-- Error -->
+        @if (returnErrorMessage()) {
+
+          <div class="mb-5 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+            {{ returnErrorMessage() }}
+          </div>
+
+        }
+
+
+        <!-- Items -->
+        <div>
+
+          <h3 class="font-semibold text-gray-800 mb-3">
+            Select Items
+          </h3>
+
+          <div class="space-y-3">
+
+            @for (item of order.items; track item.id) {
+
+              <div
+                class="border rounded-xl p-4 transition"
+                [class.border-[#0B2A4A]]="isReturnItemSelected(item.id)"
+                [class.bg-blue-50]="isReturnItemSelected(item.id)"
+                [class.border-gray-200]="!isReturnItemSelected(item.id)"
+              >
+
+                <!-- Item selection -->
+                <div class="flex items-start gap-3">
+
+                  <input
+                    type="checkbox"
+                    [checked]="isReturnItemSelected(item.id)"
+                    (change)="toggleReturnItem(item.id)"
+                    class="mt-1 h-4 w-4 accent-[#0B2A4A] cursor-pointer"
+                  >
+
+                  <div class="flex-1 min-w-0">
+
+                    <div class="flex flex-col sm:flex-row sm:justify-between gap-2">
+
+                      <div>
+
+                        <p class="font-semibold text-gray-800">
+                          {{ item.itemName }}
+                        </p>
+
+                        <p class="text-sm text-gray-500">
+                          Purchased quantity: {{ item.quantity }}
+                        </p>
+
+                      </div>
+
+                      <p class="font-semibold text-gray-800">
+                        {{ item.totalAmount | currency:'INR':'symbol':'1.2-2' }}
+                      </p>
+
+                    </div>
+
+
+                    <!-- Quantity selector -->
+                    @if (isReturnItemSelected(item.id)) {
+
+                      <div class="mt-4 flex items-center justify-between gap-4">
+
+                        <span class="text-sm font-medium text-gray-600">
+                          Return quantity
+                        </span>
+
+                        <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+
+                          <button
+                            type="button"
+                            (click)="decreaseReturnQuantity(item.id)"
+                            [disabled]="getReturnQuantity(item.id) <= 1"
+                            class="w-10 h-10 text-lg font-semibold text-gray-700 hover:bg-gray-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            −
+                          </button>
+
+                          <span class="w-12 text-center font-semibold text-gray-800">
+                            {{ getReturnQuantity(item.id) }}
+                          </span>
+
+                          <button
+                            type="button"
+                            (click)="increaseReturnQuantity(item.id)"
+                            [disabled]="getReturnQuantity(item.id) >= item.quantity"
+                            class="w-10 h-10 text-lg font-semibold text-gray-700 hover:bg-gray-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            +
+                          </button>
+
+                        </div>
+
+                      </div>
+
+                    }
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            }
+
+          </div>
+
+        </div>
+
+
+        <!-- Reason -->
+        <div class="mt-6">
+
+          <label
+            for="returnReason"
+            class="block text-sm font-semibold text-gray-700 mb-2"
+          >
+            Reason for Return
+          </label>
+
+          <textarea
+            id="returnReason"
+            rows="4"
+            [value]="returnReason()"
+            (input)="returnReason.set($any($event.target).value)"
+            placeholder="Please explain why you want to return the selected item(s)..."
+            maxlength="1000"
+            class="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none resize-none focus:ring-2 focus:ring-[#0B2A4A] focus:border-[#0B2A4A]"
+          ></textarea>
+
+          <p class="text-xs text-gray-400 mt-1">
+            {{ returnReason().length }}/1000
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- Footer -->
+      <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 p-6 border-t border-gray-200">
+
+        <button
+          type="button"
+          (click)="isReturnFormOpen.set(false)"
+          [disabled]="isSubmittingReturn()"
+          class="px-5 py-3 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          (click)="submitReturnRequest()"
+          [disabled]="isSubmittingReturn()"
+          class="px-5 py-3 rounded-lg bg-[#0B2A4A] text-white font-semibold hover:bg-[#123B63] transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          @if (isSubmittingReturn()) {
+            Submitting...
+          } @else {
+            Submit Return Request
+          }
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}
+
+  }
+
+</div>

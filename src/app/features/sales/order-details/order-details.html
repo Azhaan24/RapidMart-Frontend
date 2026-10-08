@@ -1,0 +1,913 @@
+<div class="min-h-screen bg-[#F8FAFC]">
+
+  <!-- =========================================
+       HEADER
+  ========================================== -->
+
+  <section class="bg-white border-b border-gray-100">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+      <div class="flex items-center gap-2 text-sm text-gray-500 mb-3">
+
+        <a
+          routerLink="/sales/dashboard"
+          class="hover:text-[#FF6A00] transition"
+        >
+          Sales Dashboard
+        </a>
+
+        <span>›</span>
+
+        <a
+          routerLink="/sales/orders"
+          class="hover:text-[#FF6A00] transition"
+        >
+          Orders
+        </a>
+
+        <span>›</span>
+
+        <span class="text-[#0B2A4A]">
+          Order Details
+        </span>
+
+      </div>
+
+
+      @if (order(); as currentOrder) {
+
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+
+          <div>
+
+            <div class="flex flex-wrap items-center gap-3">
+
+              <h1 class="text-3xl font-bold text-[#0B2A4A]">
+                Order {{ currentOrder.orderNumber }}
+              </h1>
+
+              <span
+                class="px-3 py-1.5 rounded-full text-xs font-semibold"
+                [class]="getStatusClass(currentOrder.status)"
+              >
+                {{ getStatusText(currentOrder.status) }}
+              </span>
+
+            </div>
+
+            <p class="mt-2 text-sm text-gray-500">
+              Placed on
+              {{ currentOrder.createdAt | date:'dd MMM yyyy, hh:mm a' }}
+            </p>
+
+          </div>
+
+
+          <a
+            routerLink="/sales/orders"
+            class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg border border-gray-200 bg-white text-[#0B2A4A] font-semibold hover:border-[#FF6A00] hover:text-[#FF6A00] transition"
+          >
+
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+
+            Back to Orders
+
+          </a>
+
+        </div>
+
+      }
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================
+       MAIN
+  ========================================== -->
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+
+    <!-- LOADING -->
+
+    @if (isLoading()) {
+
+      <div class="space-y-6">
+
+        @for (item of [1,2,3]; track item) {
+
+          <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 animate-pulse">
+
+            <div class="h-5 bg-gray-200 rounded w-48 mb-5"></div>
+
+            <div class="grid grid-cols-2 gap-4">
+
+              <div class="h-4 bg-gray-200 rounded"></div>
+              <div class="h-4 bg-gray-200 rounded"></div>
+              <div class="h-4 bg-gray-200 rounded"></div>
+              <div class="h-4 bg-gray-200 rounded"></div>
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    }
+
+
+    <!-- ERROR -->
+
+    @else if (errorMessage()) {
+
+      <div class="bg-red-50 border border-red-200 rounded-xl p-6">
+
+        <h2 class="font-bold text-red-700">
+          Unable to load order
+        </h2>
+
+        <p class="text-sm text-red-600 mt-2">
+          {{ errorMessage() }}
+        </p>
+
+      </div>
+
+    }
+
+
+    <!-- ORDER -->
+
+    @else if (order(); as currentOrder) {
+
+      <div class="space-y-6">
+
+
+        <!-- =========================================
+             ORDER SUMMARY
+        ========================================== -->
+
+        <section class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+
+          <div class="flex items-center justify-between gap-4 mb-6">
+
+            <div>
+
+              <h2 class="text-lg font-bold text-[#0B2A4A]">
+                Order Summary
+              </h2>
+
+              <p class="text-sm text-gray-500 mt-1">
+                Basic order and payment information.
+              </p>
+
+            </div>
+
+            <span
+              class="px-3 py-1.5 rounded-full text-xs font-semibold"
+              [class]="getStatusClass(currentOrder.status)"
+            >
+              {{ getStatusText(currentOrder.status) }}
+            </span>
+
+          </div>
+
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            <div>
+
+              <p class="text-xs uppercase tracking-wide font-semibold text-gray-400">
+                Order Number
+              </p>
+
+              <p class="mt-2 font-semibold text-[#0B2A4A]">
+                {{ currentOrder.orderNumber }}
+              </p>
+
+            </div>
+
+
+            <div>
+
+              <p class="text-xs uppercase tracking-wide font-semibold text-gray-400">
+                Order Date
+              </p>
+
+              <p class="mt-2 text-gray-700">
+                {{ currentOrder.createdAt | date:'dd MMM yyyy, hh:mm a' }}
+              </p>
+
+            </div>
+
+
+            <div>
+
+              <p class="text-xs uppercase tracking-wide font-semibold text-gray-400">
+                Payment Method
+              </p>
+
+              <p class="mt-2 text-gray-700">
+                {{ getPaymentMethodText(currentOrder.paymentMethod) }}
+              </p>
+
+            </div>
+
+
+            <div>
+
+              <p class="text-xs uppercase tracking-wide font-semibold text-gray-400">
+                Payment Status
+              </p>
+
+              <span
+                class="inline-flex mt-2 px-3 py-1.5 rounded-full text-xs font-semibold"
+                [class]="getPaymentStatusClass(currentOrder.paymentStatus)"
+              >
+                {{ getPaymentStatusText(currentOrder.paymentStatus) }}
+              </span>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =========================================
+             CUSTOMER + SHIPPING
+        ========================================== -->
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+
+          <!-- CUSTOMER -->
+
+          <section class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+
+            <div class="flex items-center gap-3 mb-5">
+
+              <div class="w-10 h-10 rounded-lg bg-[#0B2A4A] flex items-center justify-center">
+
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M20 21a8 8 0 00-16 0M12 11a4 4 0 100-8 4 4 0 000 8z"
+                  />
+                </svg>
+
+              </div>
+
+              <div>
+
+                <h2 class="font-bold text-[#0B2A4A]">
+                  Customer
+                </h2>
+
+                <p class="text-sm text-gray-500">
+                  Customer information
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div>
+
+              <p class="text-xs uppercase tracking-wide font-semibold text-gray-400">
+                Customer Name
+              </p>
+
+              <p class="mt-2 font-semibold text-gray-700">
+                {{ currentOrder.customerName || 'Customer' }}
+              </p>
+
+            </div>
+
+
+            <div class="mt-5">
+
+              <p class="text-xs uppercase tracking-wide font-semibold text-gray-400">
+                Customer ID
+              </p>
+
+              <p class="mt-2 text-sm text-gray-600 break-all">
+                {{ currentOrder.userId }}
+              </p>
+
+            </div>
+
+          </section>
+
+
+          <!-- SHIPPING -->
+
+          <section class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+
+            <div class="flex items-center gap-3 mb-5">
+
+              <div class="w-10 h-10 rounded-lg bg-[#FF6A00] flex items-center justify-center">
+
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 7h11v10H3zM14 10h4l3 3v4h-7zM7 17a2 2 0 104 0M16 17a2 2 0 104 0"
+                  />
+                </svg>
+
+              </div>
+
+              <div>
+
+                <h2 class="font-bold text-[#0B2A4A]">
+                  Shipping Address
+                </h2>
+
+                <p class="text-sm text-gray-500">
+                  Delivery destination
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <p class="text-gray-700 leading-7">
+              {{ currentOrder.shippingAddress }}
+            </p>
+
+          </section>
+
+        </div>
+
+
+        <!-- =========================================
+     ASSIGNMENT
+========================================== -->
+
+<section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+
+  <div class="flex items-center justify-between mb-5">
+
+    <div>
+      <h2 class="text-lg font-bold text-[#0B2A4A]">
+        Assignment
+      </h2>
+
+      <p class="text-sm text-gray-500 mt-1">
+        Sales Staff responsible for this order
+      </p>
+    </div>
+
+    <span
+      class="px-3 py-1.5 rounded-full text-xs font-semibold"
+      [class.bg-green-100]="currentOrder.assignedStaffId"
+      [class.text-green-700]="currentOrder.assignedStaffId"
+      [class.bg-amber-100]="!currentOrder.assignedStaffId"
+      [class.text-amber-700]="!currentOrder.assignedStaffId"
+    >
+      {{ currentOrder.assignedStaffId ? 'Assigned' : 'Unassigned' }}
+    </span>
+
+  </div>
+
+
+  <!-- Assigned -->
+  @if (currentOrder.assignedStaffId) {
+
+    <div class="rounded-xl bg-gray-50 border border-gray-100 p-4">
+
+      <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+        Assigned Staff
+      </p>
+
+      <p class="mt-1 font-semibold text-[#0B2A4A]">
+        {{ currentOrder.assignedStaffName || 'Sales Staff' }}
+      </p>
+
+
+      <!-- Assigned to me -->
+      @if (isAssignedToMe()) {
+
+        <p class="mt-2 text-sm text-green-600 font-medium">
+          ✓ This order is assigned to you.
+        </p>
+
+      }
+
+      <!-- Assigned to another staff -->
+      @else {
+
+        <p class="mt-2 text-sm text-gray-500">
+          This order is assigned to another Sales Staff member.
+        </p>
+
+      }
+
+    </div>
+
+  }
+
+
+  <!-- Unassigned -->
+  @else {
+
+    <div class="rounded-xl bg-amber-50 border border-amber-100 p-4">
+
+      <p class="font-semibold text-amber-800">
+        This order is currently unassigned.
+      </p>
+
+      <p class="text-sm text-amber-700 mt-1">
+        You can assign this order to yourself and then manage its status.
+      </p>
+
+
+      <!-- Self Assign Button -->
+
+      <button
+        type="button"
+        (click)="selfAssign()"
+        [disabled]="isSelfAssigning()"
+        class="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#FF6A00] text-white text-sm font-semibold hover:bg-[#e85f00] transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+
+        @if (isSelfAssigning()) {
+
+          <span>
+            Assigning...
+          </span>
+
+        } @else {
+
+          <span>
+            Self Assign
+          </span>
+
+        }
+
+      </button>
+
+
+      @if (selfAssignSuccess()) {
+
+        <p class="mt-3 text-sm text-green-600 font-medium">
+          {{ selfAssignSuccess() }}
+        </p>
+
+      }
+
+
+      @if (selfAssignError()) {
+
+        <p class="mt-3 text-sm text-red-600 font-medium">
+          {{ selfAssignError() }}
+        </p>
+
+      }
+
+    </div>
+
+  }
+
+</section>
+
+
+        <!-- =========================================
+             ITEMS
+        ========================================== -->
+
+        <section class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+
+          <div class="px-6 py-5 border-b border-gray-100">
+
+            <h2 class="text-lg font-bold text-[#0B2A4A]">
+              Order Items
+            </h2>
+
+            <p class="text-sm text-gray-500 mt-1">
+              {{ currentOrder.items.length }} item(s) in this order.
+            </p>
+
+          </div>
+
+
+          <div class="divide-y divide-gray-100">
+
+            @for (item of currentOrder.items; track item.id) {
+
+              <div class="p-6">
+
+                <div class="flex flex-col sm:flex-row gap-5">
+
+                  <!-- IMAGE -->
+
+                  <div class="w-20 h-20 rounded-lg bg-gray-50 border border-gray-100 overflow-hidden shrink-0">
+
+                    <img
+                      [src]="getImageUrl(item.imageUrl)"
+                      [alt]="item.itemName"
+                      class="w-full h-full object-cover"
+                    />
+
+                  </div>
+
+
+                  <!-- DETAILS -->
+
+                  <div class="flex-1">
+
+                    <h3 class="font-semibold text-[#0B2A4A]">
+                      {{ item.itemName }}
+                    </h3>
+
+                    <p class="text-sm text-gray-500 mt-1">
+                      Quantity: {{ item.quantity }}
+                    </p>
+
+                    <p class="text-sm text-gray-500 mt-1">
+                      Unit Price:
+                      {{ item.unitPrice | currency:'INR':'symbol':'1.2-2' }}
+                    </p>
+
+                  </div>
+
+
+                  <!-- TOTAL -->
+
+                  <div class="sm:text-right">
+
+                    <p class="text-xs uppercase tracking-wide font-semibold text-gray-400">
+                      Item Total
+                    </p>
+
+                    <p class="mt-2 font-bold text-[#0B2A4A]">
+                      {{ item.totalAmount | currency:'INR':'symbol':'1.2-2' }}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            }
+
+          </div>
+
+        </section>
+
+
+        <!-- =========================================
+             TOTALS + NOTES
+        ========================================== -->
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+
+          <!-- NOTES -->
+
+          <section class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+
+            <h2 class="text-lg font-bold text-[#0B2A4A]">
+              Customer Notes
+            </h2>
+
+            <p class="text-sm text-gray-500 mt-1">
+              Additional instructions provided with the order.
+            </p>
+
+
+            @if (currentOrder.customerNotes) {
+
+              <div class="mt-5 rounded-lg bg-gray-50 border border-gray-100 p-4">
+
+                <p class="text-gray-700 leading-6">
+                  {{ currentOrder.customerNotes }}
+                </p>
+
+              </div>
+
+            } @else {
+
+              <div class="mt-5 rounded-lg bg-gray-50 border border-gray-100 p-4">
+
+                <p class="text-sm text-gray-500">
+                  No customer notes were provided.
+                </p>
+
+              </div>
+
+            }
+
+          </section>
+
+
+          <!-- TOTALS -->
+
+          <section class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+
+            <h2 class="text-lg font-bold text-[#0B2A4A]">
+              Order Total
+            </h2>
+
+            <div class="mt-5 space-y-3">
+
+              <div class="flex justify-between text-sm">
+
+                <span class="text-gray-500">
+                  Subtotal
+                </span>
+
+                <span class="font-medium text-gray-700">
+                  {{ currentOrder.subTotal | currency:'INR':'symbol':'1.2-2' }}
+                </span>
+
+              </div>
+
+
+              <div class="flex justify-between text-sm">
+
+                <span class="text-gray-500">
+                  Delivery Fee
+                </span>
+
+                <span class="font-medium text-gray-700">
+                  {{ currentOrder.deliveryFee | currency:'INR':'symbol':'1.2-2' }}
+                </span>
+
+              </div>
+
+
+              <div class="pt-3 border-t border-gray-100 flex justify-between">
+
+                <span class="font-bold text-[#0B2A4A]">
+                  Grand Total
+                </span>
+
+                <span class="text-xl font-bold text-[#FF6A00]">
+                  {{ currentOrder.grandTotal | currency:'INR':'symbol':'1.2-2' }}
+                </span>
+
+              </div>
+
+            </div>
+
+          </section>
+
+        </div>
+
+
+        <!-- =========================================
+             RETURN / REFUND VISIBILITY
+        ========================================== -->
+
+        @if (
+          currentOrder.status === 7 ||
+          currentOrder.status === 8 ||
+          currentOrder.status === 9 ||
+          currentOrder.status === 10 ||
+          currentOrder.paymentStatus === 4 ||
+          currentOrder.paymentStatus === 5 ||
+          currentOrder.paymentStatus === 6
+        ) {
+
+          <section class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+
+            <div class="flex items-center gap-3 mb-5">
+
+              <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+
+                <svg
+                  class="w-5 h-5 text-purple-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 14l-3-3m0 0l3-3m-3 3h8a4 4 0 014 4v1m0 0l4-4m-4 4l-4-4"
+                  />
+                </svg>
+
+              </div>
+
+              <div>
+
+                <h2 class="font-bold text-[#0B2A4A]">
+                  Return / Refund Status
+                </h2>
+
+                <p class="text-sm text-gray-500">
+                  Return-related information for this order.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+              <div class="rounded-lg bg-gray-50 border border-gray-100 p-4">
+
+                <p class="text-xs uppercase tracking-wide font-semibold text-gray-400">
+                  Order Status
+                </p>
+
+                <span
+                  class="inline-flex mt-2 px-3 py-1.5 rounded-full text-xs font-semibold"
+                  [class]="getStatusClass(currentOrder.status)"
+                >
+                  {{ getStatusText(currentOrder.status) }}
+                </span>
+
+              </div>
+
+
+              <div class="rounded-lg bg-gray-50 border border-gray-100 p-4">
+
+                <p class="text-xs uppercase tracking-wide font-semibold text-gray-400">
+                  Payment Status
+                </p>
+
+                <span
+                  class="inline-flex mt-2 px-3 py-1.5 rounded-full text-xs font-semibold"
+                  [class]="getPaymentStatusClass(currentOrder.paymentStatus)"
+                >
+                  {{ getPaymentStatusText(currentOrder.paymentStatus) }}
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="mt-4 rounded-lg bg-blue-50 border border-blue-100 px-4 py-3">
+
+              <p class="text-sm text-blue-700">
+                Sales Staff can view return/refund status.
+                Return approval, receiving, and refund processing are handled by Manager/Admin.
+              </p>
+
+            </div>
+
+          </section>
+
+        }
+
+
+        <!-- =========================================
+             UPDATE STATUS
+        ========================================== -->
+
+        @if (
+  currentOrder.status !== 5 &&
+  currentOrder.status !== 6
+) {
+
+  <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+
+    <div class="flex items-center justify-between mb-5">
+
+      <div>
+        <h2 class="text-lg font-bold text-[#0B2A4A]">
+          Update Order Status
+        </h2>
+
+        <p class="text-sm text-gray-500 mt-1">
+          Change the current status of this order.
+        </p>
+      </div>
+
+    </div>
+
+
+    <!-- Permission message -->
+
+    @if (!canUpdateStatus()) {
+
+      <div class="mb-4 rounded-xl bg-gray-50 border border-gray-200 p-4">
+
+        @if (!currentOrder.assignedStaffId) {
+
+          <p class="text-sm text-gray-600">
+            You must self-assign this order before you can update its status.
+          </p>
+
+        } @else {
+
+          <p class="text-sm text-gray-600">
+            This order is assigned to another Sales Staff member.
+            Only the assigned staff member can update its status.
+          </p>
+
+        }
+
+      </div>
+
+    }
+
+
+    <div class="flex flex-col sm:flex-row gap-3">
+
+      <select
+        [value]="selectedStatus()"
+        (change)="setSelectedStatus(+$any($event.target).value)"
+        [disabled]="!canUpdateStatus() || isUpdatingStatus()"
+        class="flex-1 px-4 py-3 rounded-lg border border-gray-200 bg-white text-sm font-medium text-[#0B2A4A] focus:outline-none focus:ring-2 focus:ring-[#FF6A00] disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+      >
+
+        @for (
+          status of getStatusOptions();
+          track status.value
+        ) {
+
+          <option [value]="status.value">
+            {{ status.label }}
+          </option>
+
+        }
+
+      </select>
+
+
+      <button
+        type="button"
+        (click)="updateStatus()"
+        [disabled]="!canUpdateStatus() || isUpdatingStatus()"
+        class="px-5 py-3 rounded-lg bg-[#0B2A4A] text-white text-sm font-semibold hover:bg-[#123B63] transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+
+        @if (isUpdatingStatus()) {
+          Updating...
+        } @else {
+          Update Status
+        }
+
+      </button>
+
+    </div>
+
+
+    @if (statusUpdateSuccess()) {
+
+      <p class="mt-3 text-sm text-green-600 font-medium">
+        {{ statusUpdateSuccess() }}
+      </p>
+
+    }
+
+
+    @if (statusUpdateError()) {
+
+      <p class="mt-3 text-sm text-red-600 font-medium">
+        {{ statusUpdateError() }}
+      </p>
+
+    }
+
+  </section>
+
+}
+
+      </div>
+
+    }
+
+  </main>
+
+</div>

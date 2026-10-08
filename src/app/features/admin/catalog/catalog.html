@@ -1,0 +1,3390 @@
+<div class="min-h-screen bg-[#F8FAFC]">
+
+  <!-- =========================================
+       PAGE HEADER
+  ========================================== -->
+
+  <section class="bg-white border-b border-gray-100">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+      <!-- Breadcrumb -->
+
+      <div class="flex items-center gap-2 text-sm mb-4">
+
+        <a
+          routerLink="/admin/dashboard"
+          class="text-gray-500 hover:text-[#f94b1a] transition"
+        >
+          Admin Dashboard
+        </a>
+
+        <span class="text-gray-300">
+          /
+        </span>
+
+        <span class="font-medium text-[#0B2A4A]">
+          Products & Inventory
+        </span>
+
+      </div>
+
+
+      <!-- Heading -->
+
+      <div>
+
+        <h1 class="text-3xl sm:text-4xl font-bold text-[#0B2A4A]">
+          Products & Inventory
+        </h1>
+
+        <p class="mt-2 text-gray-500">
+          Manage products, categories, subcategories and stock.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================
+       MAIN CONTENT
+  ========================================== -->
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- =========================================
+         TABS
+    ========================================== -->
+
+    <div
+      class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+    >
+
+      <!-- Tab Navigation -->
+
+      <div class="border-b border-gray-100 overflow-x-auto">
+
+        <div class="flex min-w-max">
+
+          <!-- Products Tab -->
+
+          <button
+            type="button"
+            (click)="setActiveTab('products')"
+            class="relative px-6 py-4 text-sm font-semibold transition cursor-pointer"
+            [ngClass]="
+              activeTab() === 'products'
+                ? 'text-[#f94b1a]'
+                : 'text-gray-500 hover:text-[#0B2A4A]'
+            "
+          >
+
+            Products
+
+            @if (activeTab() === 'products') {
+              <span
+                class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#f94b1a]"
+              ></span>
+            }
+
+          </button>
+
+
+          <!-- Categories Tab -->
+
+          <button
+            type="button"
+            (click)="setActiveTab('categories')"
+            class="relative px-6 py-4 text-sm font-semibold transition cursor-pointer"
+            [ngClass]="
+              activeTab() === 'categories'
+                ? 'text-[#f94b1a]'
+                : 'text-gray-500 hover:text-[#0B2A4A]'
+            "
+          >
+
+            Categories & Subcategories
+
+            @if (activeTab() === 'categories') {
+              <span
+                class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#f94b1a]"
+              ></span>
+            }
+
+          </button>
+
+
+          <!-- Inventory Tab -->
+
+          <button
+            type="button"
+            (click)="setActiveTab('inventory')"
+            class="relative px-6 py-4 text-sm font-semibold transition cursor-pointer"
+            [ngClass]="
+              activeTab() === 'inventory'
+                ? 'text-[#f94b1a]'
+                : 'text-gray-500 hover:text-[#0B2A4A]'
+            "
+          >
+
+            Inventory & Stock
+
+            @if (activeTab() === 'inventory') {
+              <span
+                class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#f94b1a]"
+              ></span>
+            }
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================================
+           TAB CONTENT
+      ========================================== -->
+
+      <div class="p-6">
+
+
+        <!-- =======================================
+             PRODUCTS TAB
+        ======================================== -->
+
+        @if (activeTab() === 'products') {
+
+          <!-- PRODUCT PAGE HEADER -->
+
+          <div
+            class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6"
+          >
+
+            <div>
+
+              <h2 class="text-2xl font-bold text-[#0B2A4A]">
+                Products
+              </h2>
+
+              <p class="text-sm text-gray-500 mt-1">
+                Add, update and manage RapidMart products.
+              </p>
+
+            </div>
+
+
+            <button
+              type="button"
+              (click)="openCreateProductForm()"
+              class="inline-flex items-center justify-center gap-2
+                     px-5 py-3 rounded-xl
+                     bg-[#f94b1a] text-white
+                     font-semibold
+                     hover:bg-[#e63f12] cursor-pointer
+                     transition
+                     shadow-sm"
+            >
+
+              <span class="text-lg">
+                +
+              </span>
+
+              Add Product
+
+            </button>
+
+          </div>
+
+
+          <!-- SUCCESS MESSAGE -->
+
+          @if (successMessage()) {
+            <div
+              class="mb-5 rounded-xl border border-green-200
+                     bg-green-50 px-4 py-3 text-sm text-green-700"
+            >
+              {{ successMessage() }}
+            </div>
+          }
+
+
+          <!-- ERROR MESSAGE -->
+
+          @if (errorMessage()) {
+            <div
+              class="mb-5 rounded-xl border border-red-200
+                     bg-red-50 px-4 py-3 text-sm text-red-700"
+            >
+              {{ errorMessage() }}
+            </div>
+          }
+
+
+          <!-- PRODUCT FORM -->
+
+          @if (showProductForm()) {
+
+            <div
+              class="bg-white rounded-2xl border border-gray-100
+                     shadow-sm p-6 mb-8"
+            >
+
+              <!-- FORM HEADER -->
+
+              <div class="flex items-center justify-between mb-6">
+
+                <div>
+
+                  <h3 class="text-xl font-bold text-[#0B2A4A]">
+
+                    {{
+                      isEditingProduct()
+                        ? 'Edit Product'
+                        : 'Add New Product'
+                    }}
+
+                  </h3>
+
+                  <p class="text-sm text-gray-500 mt-1">
+
+                    {{
+                      isEditingProduct()
+                        ? 'Update the product information below.'
+                        : 'Enter the details for the new product.'
+                    }}
+
+                  </p>
+
+                </div>
+
+
+                <button
+                  type="button"
+                  (click)="closeProductForm()"
+                  class="text-gray-400 hover:text-gray-700
+                         text-2xl leading-none"
+                >
+                  ×
+                </button>
+
+              </div>
+
+
+              <!-- FORM -->
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+
+                <!-- PRODUCT NAME -->
+
+                <div class="md:col-span-2">
+
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Product Name
+                  </label>
+
+                  <input
+                    type="text"
+                    [ngModel]="productName()"
+                    (ngModelChange)="productName.set($event)"
+                    placeholder="Enter product name"
+                    maxlength="150"
+                    class="w-full px-4 py-3 rounded-xl
+                           border border-gray-200
+                           focus:outline-none
+                           focus:ring-2 focus:ring-orange-200
+                           focus:border-orange-400"
+                  />
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="md:col-span-2">
+
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Description
+                  </label>
+
+                  <textarea
+                    [ngModel]="productDescription()"
+                    (ngModelChange)="productDescription.set($event)"
+                    rows="4"
+                    maxlength="1000"
+                    placeholder="Enter product description"
+                    class="w-full px-4 py-3 rounded-xl
+                           border border-gray-200
+                           focus:outline-none
+                           focus:ring-2 focus:ring-orange-200
+                           focus:border-orange-400
+                           resize-none"
+                  ></textarea>
+
+                </div>
+
+
+                <!-- PRICE -->
+
+                <div>
+
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Price
+                  </label>
+
+                  <input
+                    type="number"
+                    [ngModel]="productPrice()"
+                    (ngModelChange)="productPrice.set(+$event)"
+                    min="0.01"
+                    step="0.01"
+                    placeholder="0.00"
+                    class="w-full px-4 py-3 rounded-xl
+                           border border-gray-200
+                           focus:outline-none
+                           focus:ring-2 focus:ring-orange-200
+                           focus:border-orange-400"
+                  />
+
+                </div>
+
+
+                <!-- CATEGORY -->
+
+                <div>
+
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Category
+                  </label>
+
+                  <select
+                    [ngModel]="productCategoryId()"
+                    (ngModelChange)="productCategoryId.set(+$event); onProductCategoryChange()"
+                    class="w-full px-4 py-3 rounded-xl
+                           border border-gray-200
+                           bg-white
+                           focus:outline-none
+                           focus:ring-2 focus:ring-orange-200
+                           focus:border-orange-400"
+                  >
+
+                    <option [ngValue]="0">
+                      Select category
+                    </option>
+
+                    @for (category of categories(); track category.id) {
+                      <option [ngValue]="category.id">
+                        {{ category.name }}
+                      </option>
+                    }
+
+                  </select>
+
+                </div>
+
+
+                <!-- SUBCATEGORY -->
+
+                <div>
+
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Subcategory
+                  </label>
+
+                  <select
+                    [ngModel]="productSubcategoryId()"
+                    (ngModelChange)="productSubcategoryId.set(+$event)"
+                    [disabled]="!productCategoryId()"
+                    class="w-full px-4 py-3 rounded-xl
+                           border border-gray-200
+                           bg-white
+                           disabled:bg-gray-100
+                           disabled:text-gray-400
+                           focus:outline-none
+                           focus:ring-2 focus:ring-orange-200
+                           focus:border-orange-400"
+                  >
+
+                    <option [ngValue]="0">
+                      Select subcategory
+                    </option>
+
+                    @for (
+                      subCategory of filteredSubCategories();
+                      track subCategory.id
+                    ) {
+                      <option [ngValue]="subCategory.id">
+                        {{ subCategory.name }}
+                      </option>
+                    }
+
+                  </select>
+
+                </div>
+
+
+                <!-- INITIAL STOCK -->
+
+                @if (!isEditingProduct()) {
+
+                  <div>
+
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                      Initial Stock
+                    </label>
+
+                    <input
+                      type="number"
+                      [ngModel]="initialStock()"
+                      (ngModelChange)="initialStock.set(+$event)"
+                      min="0"
+                      step="1"
+                      placeholder="0"
+                      class="w-full px-4 py-3 rounded-xl
+                             border border-gray-200
+                             focus:outline-none
+                             focus:ring-2 focus:ring-orange-200
+                             focus:border-orange-400"
+                    />
+
+                  </div>
+
+                }
+
+                <!-- IMAGE -->
+
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+
+                    Product Image
+
+                  </label>
+
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.webp"
+                    (change)="onProductImageSelected($event)"
+                    class="w-full px-4 py-2.5 rounded-xl
+                           border border-gray-200
+                           bg-white text-sm
+                           file:mr-4
+                           file:rounded-lg
+                           file:border-0
+                           file:bg-orange-50
+                           file:px-4
+                           file:py-2
+                           file:text-sm
+                           file:font-semibold
+                           file:text-[#f94b1a]"
+                  />
+
+                  @if (productImageName()) {
+                    <p class="text-xs text-gray-500 mt-2">
+
+                      Selected: {{ productImageName() }}
+
+                    </p>
+                  }
+                </div>
+
+                <div>
+                  
+                  <label class="flex items-start gap-3">
+                    
+                    <input      
+                      type="checkbox"     
+                      [ngModel]="productIsAvailable()"     
+                      (ngModelChange)="productIsAvailable.set($event)"     
+                      class="mt-1 h-5 w-5 rounded border-gray-300 text-[#0B2A4A] focus:ring-[#0B2A4A]"
+                    />
+                    <div>
+                      <span class="block text-sm font-semibold text-gray-800">
+                        
+                        Available for Sale
+                      
+                      </span>
+                      <span class="block text-sm text-gray-500 mt-1">
+                        
+                        Customers can purchase this product when it is available for sale.
+                      
+                      </span>
+                    </div>
+                  </label>
+
+                  <label class="flex items-start gap-3">
+                    
+                    <input      
+                      type="checkbox"     
+                      [ngModel]="productCanReturn()"     
+                      (ngModelChange)="productCanReturn.set($event)"     
+                      class="mt-1 h-5 w-5 rounded border-gray-300 text-[#0B2A4A] focus:ring-[#0B2A4A]"
+                    />
+                    <div>
+                      <span class="block text-sm font-semibold text-gray-800">
+                        
+                        Return Eligible
+                      
+                      </span>
+                      <span class="block text-sm text-gray-500 mt-1">
+                        
+                        Let a customer request a return for this order or not.
+                      
+                      </span>
+                    </div>
+                  </label>
+                </div>
+
+              </div>
+
+
+              <!-- FORM ACTIONS -->
+
+              <div
+                class="flex justify-end gap-3 mt-7 pt-5 border-t border-gray-100"
+              >
+
+                <button
+                  type="button"
+                  (click)="cancelEditProduct()"
+                  [disabled]="isSavingProduct()"
+                  class="px-5 py-2.5 rounded-xl
+                         border border-gray-200
+                         text-gray-700
+                         font-semibold
+                         hover:bg-gray-50 cursor-pointer
+                         disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+
+
+                @if (!isEditingProduct()) {
+
+                  <button
+                    type="button"
+                    (click)="createProduct()"
+                    [disabled]="isSavingProduct()"
+                    class="px-5 py-2.5 rounded-xl
+                           bg-[#f94b1a]
+                           text-white
+                           font-semibold
+                           hover:bg-[#e63f12] cursor-pointer
+                           disabled:opacity-50
+                           disabled:cursor-not-allowed"
+                  >
+
+                    {{
+                      isSavingProduct()
+                        ? 'Creating...'
+                        : 'Create Product'
+                    }}
+
+                  </button>
+
+                }
+
+
+                @if (isEditingProduct()) {
+
+                  <button
+                    type="button"
+                    (click)="updateProduct()"
+                    [disabled]="isSavingProduct()"
+                    class="px-5 py-2.5 rounded-xl
+                           bg-[#f94b1a]
+                           text-white
+                           font-semibold
+                           hover:bg-[#e63f12] cursor-pointer
+                           disabled:opacity-50
+                           disabled:cursor-not-allowed"
+                  >
+
+                    {{
+                      isSavingProduct()
+                        ? 'Updating...'
+                        : 'Update Product'
+                    }}
+
+                  </button>
+
+                }
+
+              </div>
+
+            </div>
+
+          }
+
+
+          <!-- SEARCH & FILTER -->
+
+          <div
+            class="bg-white rounded-2xl border border-gray-100
+                   shadow-sm p-5 mb-6"
+          >
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+
+              <!-- SEARCH -->
+
+              <div class="md:col-span-2">
+
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  Search Products
+                </label>
+
+                <input
+                  type="text"
+                  [ngModel]="productSearchTerm()"
+                  (ngModelChange)="onProductSearchChange($event)"
+                  placeholder="Search by product, category or subcategory..."
+                  class="w-full px-4 py-3 rounded-xl
+                         border border-gray-200
+                         focus:outline-none
+                         focus:ring-2 focus:ring-orange-200
+                         focus:border-orange-400"
+                />
+
+              </div>
+
+
+              <!-- STATUS -->
+
+              <div>
+
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  Status
+                </label>
+
+                <select
+                  [ngModel]="productStatusFilter()"
+                  (ngModelChange)="onProductStatusChange($event)"
+                  class="w-full px-4 py-3 rounded-xl
+                         border border-gray-200
+                         bg-white
+                         focus:outline-none
+                         focus:ring-2 focus:ring-orange-200
+                         focus:border-orange-400"
+                >
+
+                  <option value="all">
+                    All Products
+                  </option>
+
+                  <option value="available">
+                    Available
+                  </option>
+
+                  <option value="unavailable">
+                    Unavailable
+                  </option>
+
+                </select>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- LOADING -->
+
+          @if (isLoadingProducts()) {
+
+            <div
+              class="bg-white rounded-2xl border border-gray-100
+                     shadow-sm p-10 text-center"
+            >
+
+              <div
+                class="w-10 h-10 mx-auto
+                       border-4 border-gray-200
+                       border-t-[#f94b1a]
+                       rounded-full animate-spin"
+              ></div>
+
+              <p class="text-sm text-gray-500 mt-4">
+                Loading products...
+              </p>
+
+            </div>
+
+          }
+
+
+          <!-- PRODUCT TABLE -->
+
+          @if (!isLoadingProducts() && productTotalCount() > 0) {
+
+            <div
+              class="bg-white rounded-2xl border border-gray-100
+                     shadow-sm overflow-hidden"
+            >
+
+              <div class="overflow-x-auto">
+
+                <table class="w-full">
+
+                  <thead class="bg-gray-50 border-b border-gray-100">
+
+                    <tr>
+
+                      <th class="text-left px-5 py-4 text-xs font-bold text-gray-500 uppercase">
+                        Product
+                      </th>
+
+                      <th class="text-left px-5 py-4 text-xs font-bold text-gray-500 uppercase">
+                        Category
+                      </th>
+
+                      <th class="text-left px-5 py-4 text-xs font-bold text-gray-500 uppercase">
+                        Price
+                      </th>
+
+                      <th class="text-left px-5 py-4 text-xs font-bold text-gray-500 uppercase">
+                        Stock
+                      </th>
+
+                      <th class="text-left px-5 py-4 text-xs font-bold text-gray-500 uppercase">
+                        Status
+                      </th>
+
+                      <th class="text-center px-5 py-4 text-xs font-bold text-gray-500 uppercase">
+                        Actions
+                      </th>
+
+                    </tr>
+
+                  </thead>
+
+
+                  <tbody class="divide-y divide-gray-100">
+
+                    @for (product of products(); track product.id) {
+
+                      <tr class="hover:bg-gray-50 transition">
+
+
+                        <!-- PRODUCT -->
+
+                        <td class="px-5 py-4">
+
+                          <div class="flex items-center gap-3">
+
+                            <div
+                              class="w-12 h-12 rounded-xl
+                                     bg-gray-50 overflow-hidden
+                                     flex items-center justify-center
+                                     shrink-0"
+                            >
+
+                              @if (product.imageUrl) {
+
+                                <img
+                                  [src]="getImageUrl(product.imageUrl)"
+                                  [alt]="product.name"
+                                  class="w-full h-full object-cover"
+                                />
+
+                              } @else {
+
+                                <span class="text-xs text-gray-400">
+                                  No image
+                                </span>
+
+                              }
+
+                            </div>
+
+
+                            <div class="min-w-0">
+
+                              <p class="font-semibold text-[#0B2A4A] truncate max-w-xs">
+                                {{ product.name }}
+                              </p>
+
+                              <p class="text-xs text-gray-500 mt-1">
+                                ID: {{ product.id }}
+                              </p>
+
+                            </div>
+
+                          </div>
+
+                        </td>
+
+
+                        <!-- CATEGORY -->
+
+                        <td class="px-5 py-4">
+
+                          <p class="text-sm text-gray-700">
+                            {{ product.categoryName }}
+                          </p>
+
+                          <p class="text-xs text-gray-400 mt-1">
+                            {{ product.subcategoryName }}
+                          </p>
+
+                        </td>
+
+
+                        <!-- PRICE -->
+
+                        <td class="px-5 py-4">
+
+                          <span class="font-semibold text-[#0B2A4A]">
+                            ₹{{ product.price | number:'1.2-2' }}
+                          </span>
+
+                        </td>
+
+
+                        <!-- STOCK -->
+
+                        <td class="px-5 py-4">
+
+                          <span class="text-sm font-medium text-gray-700">
+                            {{ product.stockQuantity }}
+                          </span>
+
+                        </td>
+
+
+                        <!-- STATUS -->
+
+                        <td class="px-5 py-4">
+
+                          @if (product.isAvailable) {
+
+                            <span
+                              class="inline-flex px-2.5 py-1
+                                     rounded-full
+                                     bg-green-50
+                                     text-green-700
+                                     text-xs font-semibold"
+                            >
+                              Available
+                            </span>
+
+                          } @else {
+
+                            <span
+                              class="inline-flex px-2.5 py-1
+                                     rounded-full
+                                     bg-red-50
+                                     text-red-700
+                                     text-xs font-semibold"
+                            >
+                              Unavailable
+                            </span>
+
+                          }
+
+                        </td>
+
+
+                        <!-- ACTIONS -->
+
+                        <td class="px-5 py-4">
+
+                          <div class="flex justify-end gap-2">
+
+                            <button
+                              type="button"
+                              (click)="viewProduct(product)"
+                              class="px-3 py-2 rounded-lg
+                                     text-xs font-semibold
+                                     text-[#0B2A4A]
+                                     bg-gray-100
+                                     hover:bg-gray-200 cursor-pointer
+                                     transition"
+                            >
+                              View
+                            </button>
+
+
+                            <button
+                              type="button"
+                              (click)="startEditProduct(product)"
+                              class="px-3 py-2 rounded-lg
+                                     text-xs font-semibold
+                                     text-orange-700
+                                     bg-orange-50
+                                     hover:bg-orange-100 cursor-pointer
+                                     transition"
+                            >
+                              Edit
+                            </button>
+
+
+                            @if (product.isAvailable) {
+
+                              <button
+                                type="button"
+                                (click)="deactivateProduct(product)"
+                                [disabled]="processingProductId() === product.id"
+                                class="px-3 py-2 rounded-lg
+                                       text-xs font-semibold
+                                       text-red-700
+                                       bg-red-50
+                                       hover:bg-red-100 cursor-pointer
+                                       disabled:opacity-50
+                                       transition"
+                              >
+
+                                {{
+                                  processingProductId() === product.id
+                                    ? '...'
+                                    : 'Deactivate'
+                                }}
+
+                              </button>
+
+                            }
+
+                          </div>
+
+                        </td>
+
+                      </tr>
+
+                    }
+
+                  </tbody>
+
+                </table>
+
+              </div>
+
+            </div>
+
+            <!-- Pagination -->
+<div
+  class="flex items-center justify-center gap-4 mt-6 pb-4"
+>
+
+  <!-- Previous -->
+  <button
+    type="button"
+    (click)="goToPreviousProductPage()"
+    [disabled]="!productHasPreviousPage()"
+    class="px-4 py-2 rounded-lg border border-gray-300
+           text-sm font-medium
+           disabled:opacity-40
+           disabled:cursor-not-allowed
+           hover:bg-gray-50 cursor-pointer"
+  >
+    Previous
+  </button>
+
+
+  <!-- Page information -->
+  <span class="text-sm text-gray-600">
+
+    Page
+
+    {{
+      productPageNumber()
+    }}
+
+    of
+
+    {{
+      productTotalPages()
+    }}
+
+  </span>
+
+
+  <!-- Next -->
+  <button
+    type="button"
+    (click)="goToNextProductPage()"
+    [disabled]="!productHasNextPage()"
+    class="px-4 py-2 rounded-lg border border-gray-300
+           text-sm font-medium
+           disabled:opacity-40
+           disabled:cursor-not-allowed
+           hover:bg-gray-50 cursor-pointer"
+  >
+    Next
+  </button>
+
+</div>
+
+          }
+
+
+          <!-- NO PRODUCTS -->
+
+          @if (
+            !isLoadingProducts() &&
+            totalProducts() === 0
+          ) {
+
+            <div
+              class="bg-white rounded-2xl border border-gray-100
+                     shadow-sm p-12 text-center"
+            >
+
+              <div class="text-4xl mb-4">
+                📦
+              </div>
+
+              <h3 class="text-lg font-bold text-[#0B2A4A]">
+                No products found
+              </h3>
+
+              <p class="text-sm text-gray-500 mt-2">
+                Start by adding your first RapidMart product.
+              </p>
+
+            </div>
+
+          }
+
+
+          <!-- NO FILTER RESULTS -->
+
+          @if (
+            !isLoadingProducts() &&
+            totalProducts() > 0 &&
+            productTotalCount() === 0
+          ) {
+
+            <div
+              class="bg-white rounded-2xl border border-gray-100
+                     shadow-sm p-12 text-center"
+            >
+
+              <div class="text-4xl mb-4">
+                🔎
+              </div>
+
+              <h3 class="text-lg font-bold text-[#0B2A4A]">
+                No matching products
+              </h3>
+
+              <p class="text-sm text-gray-500 mt-2">
+                Try changing your search or status filter.
+              </p>
+
+            </div>
+
+          }
+
+
+          <!-- PRODUCT DETAILS -->
+
+          @if (selectedProduct(); as product) {
+
+            <div
+              class="fixed inset-0 z-50
+                     bg-black/40
+                     flex items-center justify-center
+                     p-4"
+            >
+
+              <div
+                class="bg-white rounded-2xl
+                       shadow-xl
+                       w-full max-w-2xl
+                       max-h-[90vh]
+                       overflow-y-auto"
+              >
+
+                <!-- MODAL HEADER -->
+
+                <div
+                  class="flex items-center justify-between
+                         px-6 py-5
+                         border-b border-gray-100"
+                >
+
+                  <div>
+
+                    <h3 class="text-xl font-bold text-[#0B2A4A]">
+                      Product Details
+                    </h3>
+
+                    <p class="text-xs text-gray-500 mt-1">
+                      Product ID: {{ product.id }}
+                    </p>
+
+                  </div>
+
+
+                  <button
+                    type="button"
+                    (click)="closeProductDetails()"
+                    class="text-gray-400 hover:text-gray-700
+                           text-2xl"
+                  >
+                    ×
+                  </button>
+
+                </div>
+
+
+                <!-- MODAL BODY -->
+
+                <div class="p-6">
+
+                  <div class="flex flex-col sm:flex-row gap-6">
+
+
+                    <!-- IMAGE -->
+
+                    <div
+                      class="w-full sm:w-44 h-44
+                             rounded-2xl
+                             bg-gray-50
+                             overflow-hidden
+                             shrink-0
+                             flex items-center justify-center"
+                    >
+
+                      @if (product.imageUrl) {
+
+                        <img
+                          [src]="getImageUrl(product.imageUrl)"
+                          [alt]="product.name"
+                          class="w-full h-full object-cover"
+                        />
+
+                      } @else {
+
+                        <span class="text-sm text-gray-400">
+                          No image
+                        </span>
+
+                      }
+
+                    </div>
+
+
+                    <!-- DETAILS -->
+
+                    <div class="flex-1">
+
+                      <h4 class="text-2xl font-bold text-[#0B2A4A]">
+                        {{ product.name }}
+                      </h4>
+
+                      <p class="text-sm text-gray-500 mt-3">
+                        {{ product.description || 'No description available.' }}
+                      </p>
+
+                      <div class="mt-5 space-y-3">
+
+                        <div class="flex justify-between gap-4">
+
+                          <span class="text-sm text-gray-500">
+                            Price
+                          </span>
+
+                          <span class="font-semibold text-[#0B2A4A]">
+                            ₹{{ product.price | number:'1.2-2' }}
+                          </span>
+
+                        </div>
+
+
+                        <div class="flex justify-between gap-4">
+
+                          <span class="text-sm text-gray-500">
+                            Category
+                          </span>
+
+                          <span class="text-sm font-medium text-gray-700">
+                            {{ product.categoryName }}
+                          </span>
+
+                        </div>
+
+
+                        <div class="flex justify-between gap-4">
+
+                          <span class="text-sm text-gray-500">
+                            Subcategory
+                          </span>
+
+                          <span class="text-sm font-medium text-gray-700">
+                            {{ product.subcategoryName }}
+                          </span>
+
+                        </div>
+
+
+                        <div class="flex justify-between gap-4">
+
+                          <span class="text-sm text-gray-500">
+                            Stock
+                          </span>
+
+                          <span class="text-sm font-semibold text-gray-700">
+                            {{ product.stockQuantity }}
+                          </span>
+
+                        </div>
+
+
+                        <div class="flex justify-between gap-4">
+
+                          <span class="text-sm text-gray-500">
+                            Status
+                          </span>
+
+                          <span
+                            class="text-sm font-semibold"
+                            [ngClass]="
+                              product.isAvailable
+                                ? 'text-green-600'
+                                : 'text-red-600'
+                            "
+                          >
+                            {{
+                              product.isAvailable
+                                ? 'Available'
+                                : 'Unavailable'
+                            }}
+                          </span>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                <!-- MODAL FOOTER -->
+
+                <div
+                  class="px-6 py-4
+                         border-t border-gray-100
+                         flex justify-end"
+                >
+
+                  <button
+                    type="button"
+                    (click)="closeProductDetails()"
+                    class="px-5 py-2.5
+                           rounded-xl
+                           bg-gray-100
+                           text-gray-700
+                           font-semibold
+                           hover:bg-gray-200 cursor-pointer"
+                  >
+                    Close
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          }
+
+        }
+
+
+        <!-- =========================================
+             CATEGORIES & SUBCATEGORIES TAB
+        ========================================== -->
+
+        @if (activeTab() === 'categories') {
+
+          <!-- PAGE HEADER -->
+
+          <div class="mb-6">
+
+            <h2 class="text-2xl font-bold text-[#0B2A4A]">
+              Categories & Subcategories
+            </h2>
+
+            <p class="text-sm text-gray-500 mt-1">
+              Manage product categories and their subcategories.
+            </p>
+
+          </div>
+
+
+          <!-- MESSAGES -->
+
+          @if (successMessage()) {
+            <div
+              class="mb-5 rounded-xl border border-green-200
+                     bg-green-50 px-4 py-3 text-sm text-green-700"
+            >
+              {{ successMessage() }}
+            </div>
+          }
+
+
+          @if (errorMessage()) {
+            <div
+              class="mb-5 rounded-xl border border-red-200
+                     bg-red-50 px-4 py-3 text-sm text-red-700"
+            >
+              {{ errorMessage() }}
+            </div>
+          }
+
+
+          <!-- ACTION BUTTONS -->
+
+          <div class="flex flex-col sm:flex-row gap-3 mb-6">
+
+            <button
+              type="button"
+              (click)="openCreateCategoryForm()"
+              class="inline-flex items-center justify-center gap-2
+                     px-5 py-3 rounded-xl
+                     bg-[#f94b1a]
+                     text-white
+                     font-semibold
+                     hover:bg-[#e63f12] cursor-pointer
+                     transition"
+            >
+              <span class="text-lg">+</span>
+              Add Category
+            </button>
+
+
+            <button
+              type="button"
+              (click)="openCreateSubCategoryForm()"
+              class="inline-flex items-center justify-center gap-2
+                     px-5 py-3 rounded-xl
+                     bg-[#0B2A4A]
+                     text-white
+                     font-semibold
+                     hover:bg-[#09223d] cursor-pointer
+                     transition"
+            >
+              <span class="text-lg">+</span>
+              Add Subcategory
+            </button>
+
+          </div>
+
+
+          <!-- CATEGORY FORM -->
+
+          @if (showCategoryForm()) {
+
+            <div
+              class="bg-white rounded-2xl border border-gray-100
+                     shadow-sm p-6 mb-6"
+            >
+
+              <div class="flex items-center justify-between mb-6">
+
+                <div>
+
+                  <h3 class="text-xl font-bold text-[#0B2A4A]">
+
+                    {{
+                      isEditingCategory()
+                        ? 'Edit Category'
+                        : 'Add Category'
+                    }}
+
+                  </h3>
+
+                  <p class="text-sm text-gray-500 mt-1">
+                    Enter the category information.
+                  </p>
+
+                </div>
+
+
+                <button
+                  type="button"
+                  (click)="closeCategoryForm()"
+                  class="text-gray-400 hover:text-gray-700
+                         text-2xl"
+                >
+                  ×
+                </button>
+
+              </div>
+
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                <!-- NAME -->
+
+                <div>
+
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Category Name
+                  </label>
+
+                  <input
+                    type="text"
+                    [ngModel]="categoryName()"
+                    (ngModelChange)="categoryName.set($event)"
+                    maxlength="100"
+                    placeholder="Enter category name"
+                    class="w-full px-4 py-3 rounded-xl
+                           border border-gray-200
+                           focus:outline-none
+                           focus:ring-2 focus:ring-orange-200
+                           focus:border-orange-400"
+                  />
+
+                </div>
+
+
+                <!-- IMAGE -->
+
+                <div>
+
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Category Image
+                  </label>
+
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.webp"
+                    (change)="onCategoryImageSelected($event)"
+                    class="w-full px-4 py-2.5 rounded-xl
+                           border border-gray-200
+                           bg-white text-sm
+                           file:mr-4
+                           file:rounded-lg
+                           file:border-0
+                           file:bg-orange-50
+                           file:px-4
+                           file:py-2
+                           file:text-sm
+                           file:font-semibold
+                           file:text-[#f94b1a]"
+                  />
+
+                  @if (categoryImageName()) {
+                    <p class="text-xs text-gray-500 mt-2">
+                      Selected: {{ categoryImageName() }}
+                    </p>
+                  }
+
+                </div>
+
+              </div>
+
+
+              <div class="flex justify-end gap-3 mt-6">
+
+                <button
+                  type="button"
+                  (click)="cancelCategoryForm()"
+                  [disabled]="isSavingCategory()"
+                  class="px-5 py-2.5 rounded-xl
+                         border border-gray-200
+                         text-gray-700
+                         font-semibold
+                         hover:bg-gray-50 cursor-pointer
+                         disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+
+
+                @if (!isEditingCategory()) {
+
+                  <button
+                    type="button"
+                    (click)="createCategory()"
+                    [disabled]="isSavingCategory()"
+                    class="px-5 py-2.5 rounded-xl
+                           bg-[#f94b1a]
+                           text-white
+                           font-semibold
+                           hover:bg-[#e63f12] cursor-pointer
+                           disabled:opacity-50"
+                  >
+
+                    {{
+                      isSavingCategory()
+                        ? 'Creating...'
+                        : 'Create Category'
+                    }}
+
+                  </button>
+
+                }
+
+
+                @if (isEditingCategory()) {
+
+                  <button
+                    type="button"
+                    (click)="updateCategory()"
+                    [disabled]="isSavingCategory()"
+                    class="px-5 py-2.5 rounded-xl
+                           bg-[#f94b1a]
+                           text-white
+                           font-semibold
+                           hover:bg-[#e63f12] cursor-pointer
+                           disabled:opacity-50"
+                  >
+
+                    {{
+                      isSavingCategory()
+                        ? 'Updating...'
+                        : 'Update Category'
+                    }}
+
+                  </button>
+
+                }
+
+              </div>
+
+            </div>
+
+          }
+
+
+          <!-- SUBCATEGORY FORM -->
+
+          @if (showSubCategoryForm()) {
+
+            <div
+              class="bg-white rounded-2xl border border-gray-100
+                     shadow-sm p-6 mb-6"
+            >
+
+              <div class="flex items-center justify-between mb-6">
+
+                <div>
+
+                  <h3 class="text-xl font-bold text-[#0B2A4A]">
+
+                    {{
+                      isEditingSubCategory()
+                        ? 'Edit Subcategory'
+                        : 'Add Subcategory'
+                    }}
+
+                  </h3>
+
+                  <p class="text-sm text-gray-500 mt-1">
+                    Enter the subcategory information.
+                  </p>
+
+                </div>
+
+
+                <button
+                  type="button"
+                  (click)="closeSubCategoryForm()"
+                  class="text-gray-400 hover:text-gray-700
+                         text-2xl"
+                >
+                  ×
+                </button>
+
+              </div>
+
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                <!-- NAME -->
+
+                <div>
+
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Subcategory Name
+                  </label>
+
+                  <input
+                    type="text"
+                    [ngModel]="subCategoryName()"
+                    (ngModelChange)="subCategoryName.set($event)"
+                    maxlength="100"
+                    placeholder="Enter subcategory name"
+                    class="w-full px-4 py-3 rounded-xl
+                           border border-gray-200
+                           focus:outline-none
+                           focus:ring-2 focus:ring-orange-200
+                           focus:border-orange-400"
+                  />
+
+                </div>
+
+
+                <!-- CATEGORY -->
+
+                <div>
+
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Category
+                  </label>
+
+                  <select
+                    [ngModel]="subCategoryCategoryId()"
+                    (ngModelChange)="subCategoryCategoryId.set(+$event)"
+                    class="w-full px-4 py-3 rounded-xl
+                           border border-gray-200
+                           bg-white
+                           focus:outline-none
+                           focus:ring-2 focus:ring-orange-200
+                           focus:border-orange-400"
+                  >
+
+                    <option [ngValue]="0">
+                      Select category
+                    </option>
+
+                    @for (category of categories(); track category.id) {
+                      <option [ngValue]="category.id">
+                        {{ category.name }}
+                      </option>
+                    }
+
+                  </select>
+
+                </div>
+
+
+                <!-- IMAGE -->
+
+                <div>
+
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Subcategory Image
+                  </label>
+
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.webp"
+                    (change)="onSubCategoryImageSelected($event)"
+                    class="w-full px-4 py-2.5 rounded-xl
+                           border border-gray-200
+                           bg-white text-sm
+                           file:mr-4
+                           file:rounded-lg
+                           file:border-0
+                           file:bg-orange-50
+                           file:px-4
+                           file:py-2
+                           file:text-sm
+                           file:font-semibold
+                           file:text-[#f94b1a]"
+                  />
+
+                  @if (subCategoryImageName()) {
+                    <p class="text-xs text-gray-500 mt-2">
+                      Selected: {{ subCategoryImageName() }}
+                    </p>
+                  }
+
+                </div>
+
+              </div>
+
+
+              <div class="flex justify-end gap-3 mt-6">
+
+                <button
+                  type="button"
+                  (click)="cancelSubCategoryForm()"
+                  [disabled]="isSavingSubCategory()"
+                  class="px-5 py-2.5 rounded-xl
+                         border border-gray-200
+                         text-gray-700
+                         font-semibold
+                         hover:bg-gray-50 cursor-pointer
+                         disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+
+
+                @if (!isEditingSubCategory()) {
+
+                  <button
+                    type="button"
+                    (click)="createSubCategory()"
+                    [disabled]="isSavingSubCategory()"
+                    class="px-5 py-2.5 rounded-xl
+                           bg-[#0B2A4A]
+                           text-white
+                           font-semibold
+                           hover:bg-[#09223d] cursor-pointer
+                           disabled:opacity-50"
+                  >
+
+                    {{
+                      isSavingSubCategory()
+                        ? 'Creating...'
+                        : 'Create Subcategory'
+                    }}
+
+                  </button>
+
+                }
+
+
+                @if (isEditingSubCategory()) {
+
+                  <button
+                    type="button"
+                    (click)="updateSubCategory()"
+                    [disabled]="isSavingSubCategory()"
+                    class="px-5 py-2.5 rounded-xl
+                           bg-[#0B2A4A]
+                           text-white
+                           font-semibold
+                           hover:bg-[#09223d] cursor-pointer
+                           disabled:opacity-50"
+                  >
+
+                    {{
+                      isSavingSubCategory()
+                        ? 'Updating...'
+                        : 'Update Subcategory'
+                    }}
+
+                  </button>
+
+                }
+
+              </div>
+
+            </div>
+
+          }
+
+
+          <!-- SEARCH -->
+
+          <div
+            class="bg-white rounded-2xl border border-gray-100
+                   shadow-sm p-5 mb-6"
+          >
+
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              Search Categories & Subcategories
+            </label>
+
+            <input
+              type="text"
+              [ngModel]="categorySearchTerm()"
+              (ngModelChange)="categorySearchTerm.set($event)"
+              placeholder="Search by category or subcategory..."
+              class="w-full px-4 py-3 rounded-xl
+                     border border-gray-200
+                     focus:outline-none
+                     focus:ring-2 focus:ring-orange-200
+                     focus:border-orange-400"
+            />
+
+          </div>
+
+
+          <!-- CATEGORIES -->
+
+          @if (!isLoadingCategories()) {
+
+            <div class="space-y-6">
+
+              @for (category of categories(); track category.id) {
+
+                @if (
+                  !categorySearchTerm().trim() ||
+                  category.name.toLowerCase().includes(
+                    categorySearchTerm().toLowerCase()
+                  ) ||
+                  subCategories().some(
+                    sub =>
+                      sub.categoryId === category.id &&
+                      sub.name.toLowerCase().includes(
+                        categorySearchTerm().toLowerCase()
+                      )
+                  )
+                ) {
+
+                  <div
+                    class="bg-white rounded-2xl
+                           border border-gray-100
+                           shadow-sm overflow-hidden"
+                  >
+
+                    <!-- CATEGORY HEADER -->
+
+                    <div
+                      class="flex flex-col sm:flex-row
+                             sm:items-center
+                             sm:justify-between
+                             gap-4
+                             p-5
+                             bg-gray-50
+                             border-b border-gray-100"
+                    >
+
+                      <div class="flex items-center gap-4">
+
+                        <div
+                          class="w-14 h-14 rounded-xl
+                                 bg-white
+                                 border border-gray-100
+                                 overflow-hidden
+                                 flex items-center justify-center
+                                 shrink-0"
+                        >
+
+                          @if (category.imageUrl) {
+
+                            <img
+                              [src]="getImageUrl(category.imageUrl)"
+                              [alt]="category.name"
+                              class="w-full h-full object-cover"
+                            />
+
+                          } @else {
+
+                            <span class="text-xs text-gray-400">
+                              No image
+                            </span>
+
+                          }
+
+                        </div>
+
+
+                        <div>
+
+                          <h3 class="text-lg font-bold text-[#0B2A4A]">
+                            {{ category.name }}
+                          </h3>
+
+                          <p class="text-xs text-gray-500 mt-1">
+                            {{ category.productCount }} product(s)
+                          </p>
+
+                        </div>
+
+                      </div>
+
+
+                      <div class="flex gap-2">
+
+                        <button
+                          type="button"
+                          (click)="startEditCategory(category)"
+                          class="px-3 py-2 rounded-lg
+                                 text-xs font-semibold
+                                 text-orange-700
+                                 bg-orange-50
+                                 hover:bg-orange-100 cursor-pointer"
+                        >
+                          Edit
+                        </button>
+
+
+                        <button
+                          type="button"
+                          (click)="deleteCategory(category)"
+                          [disabled]="processingCategoryId() === category.id"
+                          class="px-3 py-2 rounded-lg
+                                 text-xs font-semibold
+                                 text-red-700
+                                 bg-red-50
+                                 hover:bg-red-100 cursor-pointer
+                                 disabled:opacity-50"
+                        >
+
+                          {{
+                            processingCategoryId() === category.id
+                              ? '...'
+                              : 'Delete'
+                          }}
+
+                        </button>
+
+                      </div>
+
+                    </div>
+
+
+                    <!-- SUBCATEGORIES -->
+
+                    <div class="p-5">
+
+                      @if (
+                        subCategories().filter(
+                          sub => sub.categoryId === category.id
+                        ).length > 0
+                      ) {
+
+                        <div
+                          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                        >
+
+                          @for (
+                            subCategory of subCategories();
+                            track subCategory.id
+                          ) {
+
+                            @if (
+                              subCategory.categoryId === category.id &&
+                              (
+                                !categorySearchTerm().trim() ||
+                                category.name.toLowerCase().includes(
+                                  categorySearchTerm().toLowerCase()
+                                ) ||
+                                subCategory.name.toLowerCase().includes(
+                                  categorySearchTerm().toLowerCase()
+                                )
+                              )
+                            ) {
+
+                              <div
+                                class="border border-gray-100
+                                       rounded-xl
+                                       p-4
+                                       hover:shadow-sm
+                                       transition"
+                              >
+
+                                <div class="flex items-start gap-3">
+
+                                  <div
+                                    class="w-12 h-12 rounded-lg
+                                           bg-gray-50
+                                           overflow-hidden
+                                           flex items-center justify-center
+                                           shrink-0"
+                                  >
+
+                                    @if (subCategory.imageUrl) {
+
+                                      <img
+                                        [src]="getImageUrl(subCategory.imageUrl)"
+                                        [alt]="subCategory.name"
+                                        class="w-full h-full object-cover"
+                                      />
+
+                                    } @else {
+
+                                      <span class="text-xs text-gray-400">
+                                        —
+                                      </span>
+
+                                    }
+
+                                  </div>
+
+
+                                  <div class="min-w-0 flex-1">
+
+                                    <h4 class="font-semibold text-[#0B2A4A]">
+                                      {{ subCategory.name }}
+                                    </h4>
+
+                                    <p class="text-xs text-gray-500 mt-1">
+                                      ID: {{ subCategory.id }}
+                                    </p>
+
+                                  </div>
+
+                                </div>
+
+
+                                <div class="flex justify-end gap-2 mt-4">
+
+                                  <button
+                                    type="button"
+                                    (click)="startEditSubCategory(subCategory)"
+                                    class="px-3 py-2 rounded-lg
+                                           text-xs font-semibold
+                                           text-orange-700
+                                           bg-orange-50
+                                           hover:bg-orange-100 cursor-pointer"
+                                  >
+                                    Edit
+                                  </button>
+
+
+                                  <button
+                                    type="button"
+                                    (click)="deleteSubCategory(subCategory)"
+                                    [disabled]="processingSubCategoryId() === subCategory.id"
+                                    class="px-3 py-2 rounded-lg
+                                           text-xs font-semibold
+                                           text-red-700
+                                           bg-red-50
+                                           hover:bg-red-100 cursor-pointer
+                                           disabled:opacity-50"
+                                  >
+
+                                    {{
+                                      processingSubCategoryId() === subCategory.id
+                                        ? '...'
+                                        : 'Delete'
+                                    }}
+
+                                  </button>
+
+                                </div>
+
+                              </div>
+
+                            }
+
+                          }
+
+                        </div>
+
+                      } @else {
+
+                        <div class="py-6 text-center">
+
+                          <p class="text-sm text-gray-400">
+                            No subcategories in this category.
+                          </p>
+
+                        </div>
+
+                      }
+
+                    </div>
+
+                  </div>
+
+                }
+
+              }
+
+            </div>
+
+          }
+
+
+          <!-- CATEGORY LOADING -->
+
+          @if (isLoadingCategories()) {
+
+            <div
+              class="bg-white rounded-2xl
+                     border border-gray-100
+                     shadow-sm p-10 text-center"
+            >
+
+              <div
+                class="w-10 h-10 mx-auto
+                       border-4 border-gray-200
+                       border-t-[#f94b1a]
+                       rounded-full animate-spin"
+              ></div>
+
+              <p class="text-sm text-gray-500 mt-4">
+                Loading categories...
+              </p>
+
+            </div>
+
+          }
+
+
+          <!-- NO CATEGORIES -->
+
+          @if (
+            !isLoadingCategories() &&
+            categories().length === 0
+          ) {
+
+            <div
+              class="bg-white rounded-2xl
+                     border border-gray-100
+                     shadow-sm p-12 text-center"
+            >
+
+              <div class="text-4xl mb-4">
+                🗂️
+              </div>
+
+              <h3 class="text-lg font-bold text-[#0B2A4A]">
+                No categories found
+              </h3>
+
+              <p class="text-sm text-gray-500 mt-2">
+                Start by creating your first category.
+              </p>
+
+            </div>
+
+          }
+
+        }
+
+
+        <!-- =========================================
+             INVENTORY TAB
+        ========================================== -->
+
+        @if (activeTab() === 'inventory') {
+
+          <section class="space-y-6">
+
+            <!-- Header -->
+
+            <div
+              class="flex flex-col sm:flex-row
+                     sm:items-center sm:justify-between gap-4"
+            >
+
+              <div>
+
+                <h2 class="text-xl font-bold text-[#0B2A4A]">
+                  Inventory & Stock
+                </h2>
+
+                <p class="text-sm text-gray-500 mt-1">
+                  Monitor and adjust item stock levels.
+                </p>
+
+              </div>
+
+              <button
+                type="button"
+                (click)="loadInventory()"
+                class="px-4 py-2 rounded-lg
+                       bg-[#0B2A4A] text-white
+                       text-sm font-semibold
+                       hover:bg-[#123b60] cursor-pointer"
+              >
+                Refresh
+              </button>
+
+            </div>
+
+
+            <!-- INVENTORY SUMMARY -->
+
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6"
+            >
+
+              <!-- Total Items -->
+
+              <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
+
+                <div class="flex items-center justify-between">
+
+                  <div>
+
+                    <p class="text-sm font-medium text-gray-500">
+                      Inventory Items
+                    </p>
+
+                    <p class="mt-2 text-2xl font-bold text-[#0B2A4A]">
+                      {{ dashboard()?.totalInventoryItems }}
+                    </p>
+
+                  </div>
+
+                  <div
+                    class="w-10 h-10 rounded-lg
+                           bg-blue-50
+                           flex items-center justify-center
+                           text-[#0B2A4A]"
+                  >
+                    <span class="text-lg">📦</span>
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- Total Stock -->
+
+              <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
+
+                <div class="flex items-center justify-between">
+
+                  <div>
+
+                    <p class="text-sm font-medium text-gray-500">
+                      Total Stock
+                    </p>
+
+                    <p class="mt-2 text-2xl font-bold text-gray-900">
+                      {{ dashboard()?.totalStock }}
+                    </p>
+
+                  </div>
+
+                  <div
+                    class="w-10 h-10 rounded-lg
+                           bg-orange-50
+                           flex items-center justify-center
+                           text-[#FF6A00]"
+                  >
+                    <span class="text-lg">📊</span>
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- Reserved -->
+
+              <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
+
+                <div class="flex items-center justify-between">
+
+                  <div>
+
+                    <p class="text-sm font-medium text-gray-500">
+                      Reserved
+                    </p>
+
+                    <p class="mt-2 text-2xl font-bold text-amber-600">
+                      {{ dashboard()?.totalReservedStock }}
+                    </p>
+
+                  </div>
+
+                  <div
+                    class="w-10 h-10 rounded-lg
+                           bg-amber-50
+                           flex items-center justify-center"
+                  >
+                    <span class="text-lg">🔒</span>
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- Available -->
+
+              <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
+
+                <div class="flex items-center justify-between">
+
+                  <div>
+
+                    <p class="text-sm font-medium text-gray-500">
+                      Available
+                    </p>
+
+                    <p class="mt-2 text-2xl font-bold text-green-600">
+                      {{ dashboard()?.totalAvailableStock }}
+                    </p>
+
+                  </div>
+
+                  <div
+                    class="w-10 h-10 rounded-lg
+                           bg-green-50
+                           flex items-center justify-center"
+                  >
+                    <span class="text-lg">✓</span>
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- Low Stock -->
+
+              <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
+
+                <div class="flex items-center justify-between">
+
+                  <div>
+
+                    <p class="text-sm font-medium text-gray-500">
+                      Low Stock
+                    </p>
+
+                    <p class="mt-2 text-2xl font-bold text-amber-600">
+                      {{ dashboard()?.lowStock }}
+                    </p>
+
+                  </div>
+
+                  <div
+                    class="w-10 h-10 rounded-lg
+                           bg-amber-50
+                           flex items-center justify-center"
+                  >
+                    <span class="text-lg">⚠</span>
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- Out of Stock -->
+
+              <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
+
+                <div class="flex items-center justify-between">
+
+                  <div>
+
+                    <p class="text-sm font-medium text-gray-500">
+                      Out of Stock
+                    </p>
+
+                    <p class="mt-2 text-2xl font-bold text-red-600">
+                      {{ dashboard()?.outOfStock }}
+                    </p>
+
+                  </div>
+
+                  <div
+                    class="w-10 h-10 rounded-lg
+                           bg-red-50
+                           flex items-center justify-center"
+                  >
+                    <span class="text-lg">!
+                    </span>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <!-- SUCCESS -->
+
+            @if (inventoryActionMessage()) {
+
+              <div
+                class="rounded-lg border border-green-200
+                       bg-green-50 px-4 py-3
+                       text-sm text-green-700"
+              >
+                {{ inventoryActionMessage() }}
+              </div>
+
+            }
+
+
+            <!-- ERROR -->
+
+            @if (inventoryActionError()) {
+
+              <div
+                class="rounded-lg border border-red-200
+                       bg-red-50 px-4 py-3
+                       text-sm text-red-700"
+              >
+                {{ inventoryActionError() }}
+              </div>
+
+            }
+
+
+            <!-- LOADING -->
+
+            @if (isInventoryLoading()) {
+
+              <div
+                class="bg-white rounded-xl border
+                       border-gray-100 overflow-hidden"
+              >
+
+                @for (item of [1,2,3,4,5]; track item) {
+
+                  <div
+                    class="h-16 border-b border-gray-100
+                           animate-pulse bg-gray-50"
+                  ></div>
+
+                }
+
+              </div>
+
+            }
+
+
+            <!-- ERROR -->
+
+            @if (
+              !isInventoryLoading() &&
+              inventoryErrorMessage()
+            ) {
+
+              <div
+                class="bg-red-50 border border-red-200
+                       rounded-xl px-5 py-4
+                       text-sm text-red-700"
+              >
+                {{ inventoryErrorMessage() }}
+              </div>
+
+            }
+
+
+            <!-- INVENTORY TABLE -->
+
+            @if (
+              !isInventoryLoading() &&
+              !inventoryErrorMessage() &&
+              inventory().length > 0
+            ) {
+
+              <div
+                class="bg-white rounded-xl
+                       border border-gray-100
+                       overflow-x-auto"
+              >
+
+                <table class="min-w-full">
+
+                  <thead class="bg-gray-50">
+
+                    <tr>
+
+                      <th
+                        class="px-5 py-4 text-left
+                               text-xs font-semibold
+                               text-gray-500 uppercase"
+                      >
+                        Item
+                      </th>
+
+                      <th
+                        class="px-5 py-4 text-center
+                               text-xs font-semibold
+                               text-gray-500 uppercase"
+                      >
+                        Total
+                      </th>
+
+                      <th
+                        class="px-5 py-4 text-center
+                               text-xs font-semibold
+                               text-gray-500 uppercase"
+                      >
+                        Reserved
+                      </th>
+
+                      <th
+                        class="px-5 py-4 text-center
+                               text-xs font-semibold
+                               text-gray-500 uppercase"
+                      >
+                        Available
+                      </th>
+
+                      <th
+                        class="px-5 py-4 text-center
+                               text-xs font-semibold
+                               text-gray-500 uppercase"
+                      >
+                        Status
+                      </th>
+
+                      <th
+                        class="px-5 py-4 text-center
+                               text-xs font-semibold
+                               text-gray-500 uppercase"
+                      >
+                        Actions
+                      </th>
+
+                    </tr>
+
+                  </thead>
+
+
+                  <tbody class="divide-y divide-gray-100">
+
+                    @for (item of inventory(); track item.itemId) {
+
+                      <tr class="hover:bg-gray-50">
+
+                        <!-- Item -->
+
+                        <td class="px-5 py-4">
+
+                          <p class="font-semibold text-gray-900 truncate max-w-xs">
+                            {{ item.itemName }}
+                          </p>
+
+                          <p class="text-xs text-gray-500 mt-1">
+                            Item ID: {{ item.itemId }}
+                          </p>
+
+                        </td>
+
+
+                        <!-- Total -->
+
+                        <td class="px-5 py-4 text-center whitespace-nowrap">
+
+                          @if (editingStockItemId() !== item.itemId) {
+
+                            <div class="font-semibold text-gray-900">
+                              {{ item.quantity }}
+                            </div>
+
+                          } @else {
+
+                            <div class="flex items-center justify-center gap-2">
+
+                              <input
+                                type="number"
+                                min="0"
+                                step="1"
+                                [ngModel]="newStockQuantity()"
+                                (ngModelChange)="newStockQuantity.set(+$event)"
+                                class="w-24 px-3 py-2
+                                       border border-gray-300
+                                       rounded-lg
+                                       text-sm
+                                       focus:outline-none
+                                       focus:ring-2
+                                       focus:ring-[#FF6A00]"
+                              />
+
+                            </div>
+
+                          }
+
+                        </td>
+
+
+                        <!-- Reserved -->
+
+                        <td class="px-6 py-4 whitespace-nowrap">
+
+                          @if (editingReservedItemId() !== item.itemId) {
+
+                            <div class="font-medium text-gray-900">
+                              {{ item.reservedQuantity }}
+                            </div>
+
+                          } @else {
+
+                            <div class="flex items-center gap-2">
+
+                              <input
+                                type="number"
+                                min="1"
+                                [max]="item.reservedQuantity"
+                                [ngModel]="releaseReservedQuantity()"
+                                (ngModelChange)="releaseReservedQuantity.set(+$event)"
+                                class="w-24 px-3 py-2 border border-gray-300 rounded-lg
+                                       text-sm focus:outline-none focus:ring-2
+                                       focus:ring-[#FF6A00]"
+                                placeholder="Qty"
+                              />
+
+                            </div>
+
+                          }
+
+                        </td>
+
+
+                        <!-- Available -->
+
+                        <td
+                          class="px-5 py-4 text-center
+                                 font-semibold text-[#0B2A4A]"
+                        >
+                          {{ item.availableQuantity }}
+                        </td>
+
+
+                        <!-- Status -->
+
+                        <td class="px-5 py-4 text-center">
+
+                          <span
+                            class="inline-flex items-center
+                                   px-3 py-1 rounded-full
+                                   border text-xs font-semibold"
+                            [ngClass]="getStockStatusClass(item)"
+                          >
+                            {{ getStockStatus(item) }}
+                          </span>
+
+                        </td>
+
+
+                        <!-- Action -->
+
+                        <td class="px-5 py-4">
+
+                          <!-- NORMAL ACTIONS -->
+
+                          @if (
+                            editingStockItemId() !== item.itemId &&
+                            editingReservedItemId() !== item.itemId
+                          ) {
+
+                            <div
+                              class="flex items-center justify-center gap-2"
+                            >
+
+                              <!-- Adjust Stock -->
+
+                              <button
+                                type="button"
+                                (click)="startStockEdit(item)"
+                                class="px-3 py-2
+                                       text-sm font-medium
+                                       text-[#0B2A4A]
+                                       border border-[#0B2A4A]
+                                       rounded-lg
+                                       hover:bg-[#0B2A4A]
+                                       hover:text-white
+                                       cursor-pointer
+                                       transition"
+                              >
+                                Adjust Stock
+                              </button>
+
+
+                              <!-- Release Reserved -->
+
+                              <button
+                                type="button"
+                                (click)="startReservedRelease(item)"
+                                [disabled]="item.reservedQuantity <= 0"
+                                class="px-3 py-2
+                                       text-sm font-medium
+                                       text-[#FF6A00]
+                                       border border-[#FF6A00]
+                                       rounded-lg
+                                       hover:bg-[#FF6A00]
+                                       hover:text-white
+                                       disabled:opacity-50
+                                       disabled:cursor-not-allowed
+                                       cursor-pointer
+                                       transition"
+                              >
+                                Release Reserved
+                              </button>
+
+
+                              <!-- History -->
+
+                              <button
+                                type="button"
+                                (click)="openTransactionHistory(item)"
+                                class="px-3 py-2
+                                       text-sm font-medium
+                                       text-gray-600
+                                       border border-gray-300
+                                       rounded-lg
+                                       hover:bg-gray-100
+                                       cursor-pointer
+                                       transition"
+                              >
+                                History
+                              </button>
+
+                            </div>
+
+                          }
+
+
+                          <!-- ADJUST STOCK MODE -->
+
+                          @if (editingStockItemId() === item.itemId) {
+
+                            <div
+                              class="flex items-center justify-center gap-2"
+                            >
+
+                              <button
+                                type="button"
+                                (click)="saveStock(item)"
+                                [disabled]="isUpdatingStock()"
+                                class="px-3 py-2
+                                       text-sm font-medium
+                                       text-white
+                                       bg-[#0B2A4A]
+                                       rounded-lg
+                                       hover:bg-[#123b60]
+                                       disabled:opacity-50
+                                       disabled:cursor-not-allowed
+                                       cursor-pointer
+                                       transition"
+                              >
+                                {{
+                                  isUpdatingStock()
+                                    ? 'Saving...'
+                                    : 'Save'
+                                }}
+                              </button>
+
+
+                              <button
+                                type="button"
+                                (click)="cancelStockEdit()"
+                                [disabled]="isUpdatingStock()"
+                                class="px-3 py-2
+                                       text-sm font-medium
+                                       text-gray-600
+                                       border border-gray-300
+                                       rounded-lg
+                                       hover:bg-gray-50
+                                       disabled:opacity-50
+                                       cursor-pointer
+                                       transition"
+                              >
+                                Cancel
+                              </button>
+
+                            </div>
+
+                          }
+
+
+                          <!-- RELEASE RESERVED MODE -->
+
+                          @if (editingReservedItemId() === item.itemId) {
+
+                            <div
+                              class="flex items-center justify-center gap-2"
+                            >
+
+                              <button
+                                type="button"
+                                (click)="releaseReservedStock(item)"
+                                [disabled]="isReleasingReserved()"
+                                class="px-3 py-2
+                                       text-sm font-medium
+                                       text-white
+                                       bg-[#FF6A00]
+                                       rounded-lg
+                                       hover:bg-[#e55f00]
+                                       disabled:opacity-50
+                                       disabled:cursor-not-allowed
+                                       cursor-pointer
+                                       transition"
+                              >
+                                {{
+                                  isReleasingReserved()
+                                    ? 'Releasing...'
+                                    : 'Release'
+                                }}
+                              </button>
+
+
+                              <button
+                                type="button"
+                                (click)="cancelReservedRelease()"
+                                [disabled]="isReleasingReserved()"
+                                class="px-3 py-2
+                                       text-sm font-medium
+                                       text-gray-600
+                                       border border-gray-300
+                                       rounded-lg
+                                       hover:bg-gray-50
+                                       disabled:opacity-50
+                                       cursor-pointer
+                                       transition"
+                              >
+                                Cancel
+                              </button>
+
+                            </div>
+
+                          }
+
+                        </td>
+
+                      </tr>
+
+                    }
+
+                  </tbody>
+
+                </table>
+
+              </div>
+
+              <!-- Pagination -->
+<div
+  class="flex items-center justify-center gap-4 mt-6 pb-4"
+>
+
+  <!-- Previous -->
+  <button
+    type="button"
+    (click)="goToPreviousInventoryPage()"
+    [disabled]="!inventoryHasPreviousPage()"
+    class="px-4 py-2 rounded-lg border border-gray-300
+           text-sm font-medium
+           disabled:opacity-40
+           disabled:cursor-not-allowed
+           hover:bg-gray-50 cursor-pointer"
+  >
+    Previous
+  </button>
+
+
+  <!-- Page information -->
+  <span class="text-sm text-gray-600">
+
+    Page
+
+    {{
+      inventoryPageNumber()
+    }}
+
+    of
+
+    {{
+      inventoryTotalPages()
+    }}
+
+  </span>
+
+
+  <!-- Next -->
+  <button
+    type="button"
+    (click)="goToNextInventoryPage()"
+    [disabled]="!inventoryHasNextPage()"
+    class="px-4 py-2 rounded-lg border border-gray-300
+           text-sm font-medium
+           disabled:opacity-40
+           disabled:cursor-not-allowed
+           hover:bg-gray-50 cursor-pointer"
+  >
+    Next
+  </button>
+
+</div>
+
+            }
+
+
+            <!-- EMPTY -->
+
+            @if (
+              !isInventoryLoading() &&
+              !inventoryErrorMessage() &&
+              inventory().length === 0
+            ) {
+
+              <div
+                class="bg-white rounded-xl
+                       border border-gray-100
+                       px-6 py-12 text-center"
+              >
+
+                <h3 class="text-lg font-semibold text-gray-900">
+                  No Inventory Found
+                </h3>
+
+                <p class="text-sm text-gray-500 mt-2">
+                  There are currently no inventory records.
+                </p>
+
+              </div>
+
+            }
+
+          </section>
+
+        }
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- ==========================================
+     INVENTORY TRANSACTION HISTORY MODAL
+=========================================== -->
+
+@if (showTransactionHistory()) {
+
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center
+           bg-black/50 px-4"
+  >
+
+    <div
+      class="w-full max-w-5xl max-h-[90vh]
+             overflow-hidden
+             bg-white rounded-2xl shadow-2xl"
+    >
+
+      <!-- Modal Header -->
+
+      <div
+        class="flex items-center justify-between
+               px-6 py-5
+               border-b border-gray-100"
+      >
+
+        <div>
+
+          <h2 class="text-xl font-bold text-[#0B2A4A]">
+            Inventory History
+          </h2>
+
+          @if (selectedTransactionItem(); as selectedItem) {
+
+            <p class="mt-1 text-sm text-gray-500">
+              {{ selectedItem.itemName }}
+            </p>
+
+          }
+
+          @if (selectedTransactionItem(); as selectedItem) {
+
+            <div
+              class="mt-4 grid grid-cols-3 gap-3"
+            >
+
+              <div class="bg-gray-50 rounded-lg p-3">
+
+                <p class="text-xs text-gray-500">
+                  Total Stock
+                </p>
+
+                <p class="mt-1 text-lg font-bold text-[#0B2A4A]">
+                  {{ selectedItem.quantity }}
+                </p>
+
+              </div>
+
+
+              <div class="bg-gray-50 rounded-lg p-3">
+
+                <p class="text-xs text-gray-500">
+                  Reserved
+                </p>
+
+                <p class="mt-1 text-lg font-bold text-[#FF6A00]">
+                  {{ selectedItem.reservedQuantity }}
+                </p>
+
+              </div>
+
+
+              <div class="bg-gray-50 rounded-lg p-3">
+
+                <p class="text-xs text-gray-500">
+                  Available
+                </p>
+
+                <p class="mt-1 text-lg font-bold text-green-600">
+                  {{ selectedItem.availableQuantity }}
+                </p>
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+
+        <button
+          type="button"
+          (click)="closeTransactionHistory()"
+          class="w-9 h-9
+                 flex items-center justify-center
+                 rounded-lg
+                 text-gray-500
+                 hover:bg-gray-100
+                 hover:text-gray-800
+                 cursor-pointer"
+        >
+          ✕
+        </button>
+
+      </div>
+
+
+      <!-- Loading -->
+
+      @if (isTransactionLoading()) {
+
+        <div class="px-6 py-12 text-center">
+
+          <div
+            class="inline-block w-8 h-8
+                   border-4 border-gray-200
+                   border-t-[#FF6A00]
+                   rounded-full animate-spin"
+          ></div>
+
+          <p class="mt-3 text-sm text-gray-500">
+            Loading transaction history...
+          </p>
+
+        </div>
+
+      }
+
+
+      <!-- Error -->
+
+      @if (
+        !isTransactionLoading() &&
+        transactionErrorMessage()
+      ) {
+
+        <div
+          class="mx-6 my-6
+                 px-4 py-3
+                 rounded-lg
+                 bg-red-50
+                 border border-red-200
+                 text-sm text-red-700"
+        >
+          {{ transactionErrorMessage() }}
+        </div>
+
+      }
+
+
+      <!-- No Transactions -->
+
+      @if (
+        !isTransactionLoading() &&
+        !transactionErrorMessage() &&
+        inventoryTransactions().length === 0
+      ) {
+
+        <div class="px-6 py-12 text-center">
+
+          <div class="text-4xl mb-3">
+            📋
+          </div>
+
+          <h3 class="text-lg font-semibold text-gray-800">
+            No transactions yet
+          </h3>
+
+          <p class="mt-1 text-sm text-gray-500">
+            No inventory changes have been recorded for this item.
+          </p>
+
+        </div>
+
+      }
+
+
+      <!-- Transaction Table -->
+
+      @if (
+        !isTransactionLoading() &&
+        !transactionErrorMessage() &&
+        inventoryTransactions().length > 0
+      ) {
+
+        <div
+          class="overflow-auto max-h-[65vh]"
+        >
+
+          <table class="min-w-full">
+
+            <thead class="bg-gray-50 sticky top-0">
+
+              <tr>
+
+                <th
+                  class="px-5 py-3
+                         text-left text-xs font-semibold
+                         text-gray-500 uppercase"
+                >
+                  Date
+                </th>
+
+                <th
+                  class="px-5 py-3
+                         text-left text-xs font-semibold
+                         text-gray-500 uppercase"
+                >
+                  Transaction
+                </th>
+
+                <th
+                  class="px-5 py-3
+                         text-center text-xs font-semibold
+                         text-gray-500 uppercase"
+                >
+                  Quantity
+                </th>
+
+                <th
+                  class="px-5 py-3
+                         text-center text-xs font-semibold
+                         text-gray-500 uppercase"
+                >
+                  Stock
+                </th>
+
+                <th
+                  class="px-5 py-3
+                         text-center text-xs font-semibold
+                         text-gray-500 uppercase"
+                >
+                  Reserved
+                </th>
+
+                <th
+                  class="px-5 py-3
+                         text-left text-xs font-semibold
+                         text-gray-500 uppercase"
+                >
+                  Order
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody class="divide-y divide-gray-100">
+
+              @for (
+                transaction of inventoryTransactions();
+                track transaction.id
+              ) {
+
+                <tr class="hover:bg-gray-50">
+
+                  <!-- Date -->
+
+                  <td class="px-5 py-4 whitespace-nowrap">
+
+                    <p class="text-sm font-medium text-gray-800">
+                      {{ transaction.createdAt | date:'dd MMM yyyy' }}
+                    </p>
+
+                    <p class="text-xs text-gray-500">
+                      {{ transaction.createdAt | date:'hh:mm a' }}
+                    </p>
+
+                  </td>
+
+
+                  <!-- Transaction Type -->
+
+                  <td class="px-5 py-4">
+
+                    <span
+                      class="inline-flex items-center
+                             px-2.5 py-1
+                             rounded-full
+                             text-xs font-medium"
+                      [ngClass]="{
+                        'bg-green-50 text-green-700':
+                          transaction.type === 1,
+
+                        'bg-red-50 text-red-700':
+                          transaction.type === 2,
+
+                        'bg-blue-50 text-blue-700':
+                          transaction.type !== 1 &&
+                          transaction.type !== 2
+                      }"
+                    >
+                      {{ getTransactionTypeName(transaction.type) }}
+                    </span>
+
+                  </td>
+
+
+                  <!-- Quantity -->
+
+                  <td
+                    class="px-5 py-4
+                           text-center font-semibold text-gray-900"
+                  >
+                    {{ transaction.quantity }}
+                  </td>
+
+
+                  <!-- Stock -->
+
+                  <td class="px-5 py-4 text-center">
+
+                    <span class="text-gray-500">
+                      {{ transaction.previousQuantity }}
+                    </span>
+
+                    <span class="mx-1 text-gray-400">
+                      →
+                    </span>
+
+                    <span class="font-semibold text-[#0B2A4A]">
+                      {{ transaction.newQuantity }}
+                    </span>
+
+                  </td>
+
+
+                  <!-- Reserved -->
+
+                  <td class="px-5 py-4 text-center">
+
+                    <span class="text-gray-500">
+                      {{ transaction.previousReservedQuantity }}
+                    </span>
+
+                    <span class="mx-1 text-gray-400">
+                      →
+                    </span>
+
+                    <span class="font-semibold text-[#FF6A00]">
+                      {{ transaction.newReservedQuantity }}
+                    </span>
+
+                  </td>
+
+
+                  <!-- Order -->
+
+                  <td class="px-5 py-4">
+
+                    @if (transaction.orderId) {
+
+                      <span class="text-sm text-gray-700">
+                        #{{ transaction.orderId }}
+                      </span>
+
+                    } @else {
+
+                      <span class="text-sm text-gray-400">
+                        —
+                      </span>
+
+                    }
+
+                  </td>
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+          <!-- Pagination -->
+<div
+  class="flex items-center justify-center gap-4 mt-6 pb-4"
+>
+
+  <!-- Previous -->
+  <button
+    type="button"
+    (click)="goToPreviousTransactionPage()"
+    [disabled]="!transactionHasPreviousPage()"
+    class="px-4 py-2 rounded-lg border border-gray-300
+           text-sm font-medium
+           disabled:opacity-40
+           disabled:cursor-not-allowed
+           hover:bg-gray-50 cursor-pointer"
+  >
+    Previous
+  </button>
+
+
+  <!-- Page information -->
+  <span class="text-sm text-gray-600">
+
+    Page
+
+    {{
+      transactionPageNumber()
+    }}
+
+    of
+
+    {{
+      transactionTotalPages()
+    }}
+
+  </span>
+
+
+  <!-- Next -->
+  <button
+    type="button"
+    (click)="goToNextTransactionPage()"
+    [disabled]="!transactionHasNextPage()"
+    class="px-4 py-2 rounded-lg border border-gray-300
+           text-sm font-medium
+           disabled:opacity-40
+           disabled:cursor-not-allowed
+           hover:bg-gray-50 cursor-pointer"
+  >
+    Next
+  </button>
+
+</div>
+
+        </div>
+
+      }
+
+
+      <!-- Footer -->
+
+      <div
+        class="flex justify-end
+               px-6 py-4
+               border-t border-gray-100
+               bg-gray-50"
+      >
+
+        <button
+          type="button"
+          (click)="closeTransactionHistory()"
+          class="px-4 py-2
+                 text-sm font-medium
+                 text-gray-700
+                 bg-white
+                 border border-gray-300
+                 rounded-lg
+                 hover:bg-gray-100
+                 cursor-pointer"
+        >
+          Close
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}

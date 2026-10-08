@@ -1,0 +1,969 @@
+<div class="min-h-screen bg-[#F8FAFC]">
+
+  <!-- =====================================================
+       PAGE HEADER
+  ====================================================== -->
+
+  <section class="bg-white border-b border-gray-100">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+
+        <!-- Page title -->
+
+        <div class="flex items-center gap-4">
+
+          <div
+            class="w-12 h-12 rounded-xl bg-[#0B2A4A] flex items-center justify-center text-white shrink-0"
+          >
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"
+              />
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 5a3 3 0 0 1 6 0v1H9V5Z"
+              />
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 13h6M9 17h4"
+              />
+
+            </svg>
+
+          </div>
+
+          <div>
+
+            <h1 class="text-2xl sm:text-3xl font-bold text-[#0B2A4A]">
+              Order Management
+            </h1>
+
+            <p class="text-sm text-gray-500 mt-1">
+              View and monitor all customer orders
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- Refresh -->
+
+        <button
+          type="button"
+          (click)="refreshOrders()"
+          [disabled]="isLoading()"
+          class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-4 h-4"
+            [class.animate-spin]="isLoading()"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 4v5h5"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 9a8 8 0 0 1 13.66-3.66L20 8"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M20 20v-5h-5"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M20 15a8 8 0 0 1-13.66 3.66L4 16"
+            />
+
+          </svg>
+
+          Refresh
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       MAIN CONTENT
+  ====================================================== -->
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- =====================================================
+         SUMMARY CARDS
+    ====================================================== -->
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+
+      <!-- Total Orders -->
+
+      <div
+        class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"
+      >
+
+        <div class="flex items-center justify-between gap-3">
+
+          <div>
+
+            <p class="text-sm text-gray-500">
+              Total Orders
+            </p>
+
+            <p class="text-2xl font-bold text-[#0B2A4A] mt-1">
+              {{ dashboard()?.totalOrders }}
+            </p>
+
+          </div>
+
+          <div
+            class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0"
+          >
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3 7h18M5 7v12h14V7M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+              />
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 12h6M9 16h4"
+              />
+
+            </svg>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Pending -->
+
+      <div
+        class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"
+      >
+
+        <div class="flex items-center justify-between gap-3">
+
+          <div>
+
+            <p class="text-sm text-gray-500">
+              Pending
+            </p>
+
+            <p class="text-2xl font-bold text-amber-600 mt-1">
+              {{ dashboard()?.pendingOrders }}
+            </p>
+
+          </div>
+
+          <div
+            class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0"
+          >
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+              />
+
+              <path
+                stroke-linecap="round"
+                d="M12 7v5l3 2"
+              />
+
+            </svg>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Processing -->
+
+      <div
+        class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"
+      >
+
+        <div class="flex items-center justify-between gap-3">
+
+          <div>
+
+            <p class="text-sm text-gray-500">
+              Processing
+            </p>
+
+            <p class="text-2xl font-bold text-indigo-600 mt-1">
+              {{ dashboard()?.processingOrders }}
+            </p>
+
+          </div>
+
+          <div
+            class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0"
+          >
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 3v3M12 18v3M3 12h3M18 12h3M5.64 5.64l2.12 2.12M16.24 16.24l2.12 2.12M18.36 5.64l-2.12 2.12M7.76 16.24l-2.12 2.12"
+              />
+
+              <circle
+                cx="12"
+                cy="12"
+                r="4"
+              />
+
+            </svg>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Delivered -->
+
+      <div
+        class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm"
+      >
+
+        <div class="flex items-center justify-between gap-3">
+
+          <div>
+
+            <p class="text-sm text-gray-500">
+              Delivered
+            </p>
+
+            <p class="text-2xl font-bold text-green-600 mt-1">
+              {{ dashboard()?.deliveredOrders }}
+            </p>
+
+          </div>
+
+          <div
+            class="w-11 h-11 rounded-xl bg-green-50 text-green-600 flex items-center justify-center shrink-0"
+          >
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M5 13l4 4L19 7"
+              />
+
+            </svg>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SEARCH + STATUS FILTER
+    ====================================================== -->
+
+    <div
+      class="bg-white rounded-xl border border-gray-100 shadow-sm p-5 mb-6"
+    >
+
+      <div class="flex flex-col lg:flex-row lg:items-end gap-4">
+
+        <!-- Search -->
+
+        <div class="flex-1">
+
+          <label
+            for="orderSearch"
+            class="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Search Orders
+          </label>
+
+          <div class="relative">
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m21 21-4.35-4.35"
+              />
+
+              <circle
+                cx="11"
+                cy="11"
+                r="7"
+              />
+
+            </svg>
+
+            <input
+              id="orderSearch"
+              type="text"
+              [ngModel]="searchTerm()"
+              (ngModelChange)="onSearchChange($event)"
+              placeholder="Search by order number, customer or address..."
+              class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-[#0B2A4A] focus:ring-2 focus:ring-[#0B2A4A]/10 transition"
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- Status -->
+
+        <div class="w-full lg:w-60">
+
+          <label
+            for="orderStatus"
+            class="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Order Status
+          </label>
+
+          <select
+            id="orderStatus"
+            [ngModel]="selectedStatus()"
+            (ngModelChange)="onStatusChange($event)"
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white outline-none focus:border-[#0B2A4A] focus:ring-2 focus:ring-[#0B2A4A]/10 transition"
+          >
+
+            <option [ngValue]=null>
+              All Statuses
+            </option>
+
+            @for (status of orderStatuses; track status.value) {
+
+              <option [ngValue]="status.value">
+                {{ status.label }}
+              </option>
+
+            }
+
+          </select>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ERROR MESSAGE
+    ====================================================== -->
+
+    @if (errorMessage()) {
+
+      <div
+        class="bg-red-50 border border-red-100 rounded-xl p-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+      >
+
+        <div class="flex items-center gap-3">
+
+          <div
+            class="w-9 h-9 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0"
+          >
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 9v4"
+              />
+
+              <path
+                stroke-linecap="round"
+                d="M12 17h.01"
+              />
+
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+              />
+
+            </svg>
+
+          </div>
+
+          <p class="text-sm text-red-700">
+            {{ errorMessage() }}
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          (click)="loadOrders()"
+          class="text-sm font-semibold text-red-700 hover:text-red-900 transition"
+        >
+          Retry
+        </button>
+
+      </div>
+
+    }
+
+
+    <!-- =====================================================
+         LOADING STATE
+    ====================================================== -->
+
+    @if (isLoading()) {
+
+      <div
+        class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden"
+      >
+
+        <div class="px-5 py-4 border-b border-gray-100">
+
+          <div class="h-5 w-32 bg-gray-200 rounded animate-pulse"></div>
+
+          <div class="h-3 w-48 bg-gray-100 rounded animate-pulse mt-2"></div>
+
+        </div>
+
+        <div class="p-5 space-y-4">
+
+          @for (item of [1, 2, 3, 4, 5]; track item) {
+
+            <div
+              class="h-14 bg-gray-100 rounded-lg animate-pulse"
+            ></div>
+
+          }
+
+        </div>
+
+      </div>
+
+    }
+
+
+    <!-- =====================================================
+         ORDERS TABLE
+    ====================================================== -->
+
+    @if (!isLoading()) {
+
+      <div
+        class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden"
+      >
+
+        <!-- Table header -->
+
+        <div
+          class="px-5 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+        >
+
+          <div>
+
+            <h2 class="font-semibold text-[#0B2A4A]">
+              Orders
+            </h2>
+
+            <p class="text-xs text-gray-500 mt-1">
+              Showing {{ totalCount() }} of {{ dashboard()?.totalOrders }} orders
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             EMPTY STATE
+        ================================================== -->
+
+        @if (totalCount() === 0) {
+
+          <div
+            class="py-16 px-6 text-center"
+          >
+
+            <div
+              class="w-16 h-16 mx-auto rounded-full bg-gray-100 flex items-center justify-center text-gray-400 mb-5"
+            >
+
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-8 h-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="1.6"
+              >
+
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3 7h18M5 7v12h14V7M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                />
+
+              </svg>
+
+            </div>
+
+            <h3 class="text-lg font-semibold text-gray-800">
+              No orders found
+            </h3>
+
+            <p class="text-sm text-gray-500 mt-1 max-w-md mx-auto">
+              No orders match your current search or status filter.
+            </p>
+
+            @if (searchTerm() || selectedStatus() !== null) {
+
+              <button
+                type="button"
+                (click)="clearFilters()"
+                class="mt-4 inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium text-[#0B2A4A] border border-gray-200 hover:bg-gray-50 transition"
+              >
+                Clear Filters
+              </button>
+
+            }
+
+          </div>
+
+        }
+
+
+        <!-- =================================================
+             TABLE
+        ================================================== -->
+
+        @if (totalCount() > 0) {
+
+          <div class="overflow-x-auto">
+
+            <table class="w-full min-w-[1100px]">
+
+              <!-- Table Head -->
+
+              <thead class="bg-gray-50 border-b border-gray-100">
+
+                <tr>
+
+                  <th
+                    class="px-4 py-3.5 text-left text-[11px] font-bold uppercase tracking-wider text-gray-500 whitespace-nowrap"
+                  >
+                    Order
+                  </th>
+
+                  <th
+                    class="px-4 py-3.5 text-left text-[11px] font-bold uppercase tracking-wider text-gray-500 whitespace-nowrap"
+                  >
+                    Customer
+                  </th>
+
+                  <th
+                    class="px-4 py-3.5 text-left text-[11px] font-bold uppercase tracking-wider text-gray-500 whitespace-nowrap"
+                  >
+                    Date
+                  </th>
+
+                  <th
+                    class="px-4 py-3.5 text-left text-[11px] font-bold uppercase tracking-wider text-gray-500 whitespace-nowrap"
+                  >
+                    Amount
+                  </th>
+
+                  <th
+                    class="px-4 py-3.5 text-left text-[11px] font-bold uppercase tracking-wider text-gray-500 whitespace-nowrap"
+                  >
+                    Payment
+                  </th>
+
+                  <th
+                    class="px-4 py-3.5 text-left text-[11px] font-bold uppercase tracking-wider text-gray-500 whitespace-nowrap"
+                  >
+                    Status
+                  </th>
+
+                  <th
+                    class="px-4 py-3.5 text-left text-[11px] font-bold uppercase tracking-wider text-gray-500 whitespace-nowrap"
+                  >
+                    Assigned Staff
+                  </th>
+
+                  <th
+                    class="px-4 py-3.5 text-right text-[11px] font-bold uppercase tracking-wider text-gray-500 whitespace-nowrap"
+                  >
+                    Action
+                  </th>
+
+                </tr>
+
+              </thead>
+
+
+              <!-- Table Body -->
+
+              <tbody class="divide-y divide-gray-100">
+
+                @for (
+                  order of orders();
+                  track order.id
+                ) {
+
+                  <tr
+                    class="hover:bg-gray-50/70 transition"
+                  >
+
+                    <!-- ================================
+                         ORDER
+                    ================================= -->
+
+                    <td class="px-4 py-4 align-middle">
+
+                      <div>
+
+                        <p class="text-sm font-semibold text-[#0B2A4A]">
+                          {{ order.orderNumber }}
+                        </p>
+
+                        <p class="text-xs text-gray-400 mt-1">
+                          Order #{{ order.id }}
+                        </p>
+
+                      </div>
+
+                    </td>
+
+
+                    <!-- ================================
+                         CUSTOMER
+                    ================================= -->
+
+                    <td class="px-4 py-4 align-middle">
+
+                      <div class="max-w-[190px]">
+
+                        <p
+                          class="text-sm font-medium text-gray-800 truncate"
+                          [title]="order.customerName || 'Unknown Customer'"
+                        >
+                          {{ order.customerName || 'Unknown Customer' }}
+                        </p>
+
+                        @if (order.shippingAddress) {
+
+                          <p
+                            class="text-xs text-gray-400 mt-1 truncate"
+                            [title]="order.shippingAddress"
+                          >
+                            {{ order.shippingAddress }}
+                          </p>
+
+                        }
+
+                      </div>
+
+                    </td>
+
+
+                    <!-- ================================
+                         DATE
+                    ================================= -->
+
+                    <td class="px-4 py-4 align-middle">
+
+                      <p class="text-sm text-gray-700 whitespace-nowrap">
+                        {{ formatDate(order.createdAt) }}
+                      </p>
+
+                      <p class="text-xs text-gray-400 mt-1">
+                        {{ formatTime(order.createdAt) }}
+                      </p>
+
+                    </td>
+
+
+                    <!-- ================================
+                         AMOUNT
+                    ================================= -->
+
+                    <td class="px-4 py-4 align-middle">
+
+                      <span
+                        class="text-sm font-semibold text-gray-800 whitespace-nowrap"
+                      >
+                        ₹{{ order.grandTotal | number:'1.2-2' }}
+                      </span>
+
+                    </td>
+
+
+                    <!-- ================================
+                         PAYMENT
+                    ================================= -->
+
+                    <td class="px-4 py-4 align-middle">
+
+                      <p class="text-sm text-gray-700 whitespace-nowrap">
+                        {{ getPaymentMethodLabel(order.paymentMethod) }}
+                      </p>
+
+                      <span
+                        class="inline-flex items-center mt-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold whitespace-nowrap"
+                        [ngClass]="getPaymentStatusClass(order.paymentStatus)"
+                      >
+                        {{ getPaymentStatusLabel(order.paymentStatus) }}
+                      </span>
+
+                    </td>
+
+
+                    <!-- ================================
+                         ORDER STATUS
+                    ================================= -->
+
+                    <td class="px-4 py-4 align-middle">
+
+                        <span
+                        class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-semibold whitespace-nowrap"
+                        [ngClass]="getOrderStatusClass(getDisplayStatus(order))"
+                      >
+                        {{ getOrderStatusLabel(getDisplayStatus(order)) }}
+                      </span>
+
+                    </td>
+
+
+                    <!-- ================================
+                         ASSIGNED STAFF
+                    ================================= -->
+
+                    <td class="px-4 py-4 align-middle">
+
+                      @if (order.assignedStaffName) {
+
+                        <span
+                          class="text-sm text-gray-700 whitespace-nowrap"
+                        >
+                          {{ order.assignedStaffName }}
+                        </span>
+
+                      } @else {
+
+                        <span
+                          class="inline-flex items-center gap-1.5 text-xs text-gray-400 italic"
+                        >
+
+                          <span
+                            class="w-1.5 h-1.5 rounded-full bg-gray-300"
+                          ></span>
+
+                          Unassigned
+
+                        </span>
+
+                      }
+
+                    </td>
+
+
+                    <!-- ================================
+                         ACTION
+                    ================================= -->
+
+                    <td class="px-4 py-4 align-middle text-right">
+
+                      <a
+                        [routerLink]="['/admin/orders', order.id]"
+                        class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#0B2A4A] text-white text-xs font-semibold hover:bg-[#123B63] active:scale-[0.98] transition"
+                      >
+
+                        View
+
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-3.5 h-3.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="m9 5 7 7-7 7"
+                          />
+
+                        </svg>
+
+                      </a>
+
+                    </td>
+
+                  </tr>
+
+                }
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        }
+
+      </div>
+
+      <div
+  class="flex items-center justify-center gap-4 mt-6 pb-4">
+
+  <!-- Previous -->
+  <button
+    type="button"
+    (click)="goToPreviousPage()"
+    [disabled]="!hasPreviousPage()"
+    class="px-4 py-2 rounded-lg border border-gray-300
+           text-sm font-medium
+           disabled:opacity-40
+           disabled:cursor-not-allowed
+           hover:bg-gray-50 cursor-pointer"
+  >
+    Previous
+  </button>
+
+
+  <!-- Page information -->
+  <span class="text-sm text-gray-600">
+
+    Page
+
+    {{ pageNumber() }}
+
+    of
+
+    {{ totalPages() }}
+
+  </span>
+
+
+  <!-- Next -->
+  <button
+    type="button"
+    (click)="goToNextPage()"
+    [disabled]="!hasNextPage()"
+    class="px-4 py-2 rounded-lg border border-gray-300
+           text-sm font-medium
+           disabled:opacity-40
+           disabled:cursor-not-allowed
+           hover:bg-gray-50 cursor-pointer"
+  >
+    Next
+  </button>
+
+</div>
+
+    }
+
+  </main>
+
+</div>

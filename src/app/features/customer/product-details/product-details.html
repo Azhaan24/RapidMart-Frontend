@@ -1,0 +1,574 @@
+<!-- ========================= LOADING STATE ========================= -->
+
+@if (isLoading()) {
+
+<div class="min-h-screen bg-gray-50 py-10">
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+  <!-- Breadcrumb Skeleton -->
+  <div class="h-4 w-72 bg-gray-200 rounded animate-pulse mb-8"></div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+    <!-- Image Skeleton -->
+    <div
+      class="h-[450px] bg-gray-200 rounded-2xl animate-pulse"
+    ></div>
+
+    <!-- Details Skeleton -->
+    <div class="space-y-5">
+
+      <div class="h-8 w-3/4 bg-gray-200 rounded animate-pulse"></div>
+
+      <div class="h-5 w-32 bg-gray-200 rounded animate-pulse"></div>
+
+      <div class="h-10 w-40 bg-gray-200 rounded animate-pulse"></div>
+
+      <div class="space-y-3">
+
+        <div class="h-4 bg-gray-200 rounded animate-pulse"></div>
+
+        <div class="h-4 bg-gray-200 rounded animate-pulse"></div>
+
+        <div class="h-4 w-3/4 bg-gray-200 rounded animate-pulse"></div>
+
+      </div>
+
+      <div class="h-12 bg-gray-200 rounded animate-pulse"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</div>
+
+}
+
+<!-- ========================= ERROR STATE ========================= -->
+
+@else if (errorMessage()) {
+
+<div class="min-h-screen bg-gray-50 flex items-center justify-center px-4" >
+
+<div
+  class="bg-white rounded-2xl shadow-sm p-8 text-center max-w-md w-full"
+>
+
+  <div
+    class="w-16 h-16 mx-auto mb-5 rounded-full bg-orange-100 flex items-center justify-center"
+  >
+
+    <svg
+      class="w-8 h-8 text-orange-500"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M12 9v2m0 4h.01M12 3a9 9 0 100 18 9 9 0 000-18z"
+      />
+
+    </svg>
+
+  </div>
+
+  <h2 class="text-xl font-bold text-gray-900 mb-2">
+    Product Not Found
+  </h2>
+
+  <p class="text-gray-500 mb-6">
+    {{ errorMessage() }}
+  </p>
+
+  <a
+    routerLink="/"
+    class="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-[#0B2A4A] text-white font-medium hover:bg-[#123B63] transition"
+  >
+    Go Back Home
+  </a>
+
+</div>
+
+</div>
+
+}
+
+<!-- ========================= PRODUCT DETAILS ========================= -->
+
+@else if (product(); as product) {
+
+<div class="min-h-screen bg-gray-50">
+
+<!-- =========================
+     BREADCRUMB
+========================== -->
+
+<div class="bg-white border-b border-gray-100">
+
+  <div
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4"
+  >
+
+    <div class="flex flex-wrap items-center gap-2 text-sm">
+
+      <a
+        routerLink="/"
+        class="text-gray-500 hover:text-[#f94b1a] transition"
+      >
+        Home
+      </a>
+
+      <span class="text-gray-300">
+        /
+      </span>
+
+      <a
+        [routerLink]="['/category', product.categoryId]"
+        class="text-gray-500 hover:text-[#f94b1a] transition"
+      >
+        {{ product.categoryName }}
+      </a>
+
+      <span class="text-gray-300">
+        /
+      </span>
+
+      <a
+        [routerLink]="[
+          '/category',
+          product.categoryId,
+          'subcategory',
+          product.subcategoryId
+        ]"
+        class="text-gray-500 hover:text-[#f94b1a] transition"
+      >
+        {{ product.subcategoryName }}
+      </a>
+
+      <span class="text-gray-300">
+        /
+      </span>
+
+      <span class="text-gray-900 font-medium">
+        {{ product.name }}
+      </span>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     MAIN PRODUCT SECTION
+========================== -->
+
+<main
+  class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14"
+>
+
+  <div
+    class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16"
+  >
+
+    <!-- =========================
+         PRODUCT IMAGE
+    ========================== -->
+
+    <div>
+
+      <div
+        class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+      >
+
+        <div
+          class="aspect-square flex items-center justify-center p-8"
+        >
+
+          <img
+            [src]="imageBaseUrl + product.imageUrl"
+            [alt]="product.name"
+            class="w-full h-full object-contain"
+          />
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================
+         PRODUCT INFORMATION
+    ========================== -->
+
+    <div class="flex flex-col">
+
+      <!-- Category -->
+
+      <div class="mb-3">
+
+        <span
+          class="inline-flex items-center px-3 py-1 rounded-full bg-orange-50 text-[#f94b1a] text-sm font-medium"
+        >
+          {{ product.categoryName }}
+        </span>
+
+      </div>
+
+
+      <!-- Product Name -->
+
+      <h1
+        class="text-3xl sm:text-4xl font-bold text-[#0B2A4A] leading-tight"
+      >
+        {{ product.name }}
+      </h1>
+
+
+      <!-- Rating -->
+
+      <div class="flex items-center gap-3 mt-4">
+
+        <div class="flex items-center">
+
+          <span class="text-[#FF9800] text-lg">★</span>
+          <span class="text-[#FF9800] text-lg">★</span>
+          <span class="text-[#FF9800] text-lg">★</span>
+          <span class="text-[#FF9800] text-lg">★</span>
+          <span class="text-gray-300 text-lg">★</span>
+
+        </div>
+
+        <span class="text-sm text-gray-500">
+          No reviews yet
+        </span>
+
+      </div>
+
+
+      <!-- Price -->
+
+      <div
+        class="mt-6 pb-6 border-b border-gray-200"
+      >
+
+        <span
+          class="text-4xl font-bold text-[#f94b1a]"
+        >
+          ₹{{ product.price }}
+        </span>
+
+      </div>
+
+
+      <!-- Description -->
+
+      <div class="mt-6">
+
+        <h2
+          class="text-lg font-semibold text-[#0B2A4A] mb-2"
+        >
+          Description
+        </h2>
+
+        <p
+          class="text-gray-600 leading-7"
+        >
+          {{ product.description }}
+        </p>
+
+      </div>
+
+
+      <!-- Product Information -->
+
+      <div
+        class="mt-6 bg-white rounded-xl border border-gray-100 p-5"
+      >
+
+        <h2
+          class="text-lg font-semibold text-[#0B2A4A] mb-4"
+        >
+          Product Information
+        </h2>
+
+        <div class="space-y-3">
+
+          <!-- Category -->
+
+          <div class="flex justify-between gap-4">
+
+            <span class="text-gray-500">
+              Category
+            </span>
+
+            <span
+              class="font-medium text-gray-900 text-right"
+            >
+              {{ product.categoryName }}
+            </span>
+
+          </div>
+
+
+          <!-- Subcategory -->
+
+          <div class="flex justify-between gap-4">
+
+            <span class="text-gray-500">
+              Subcategory
+            </span>
+
+            <span
+              class="font-medium text-gray-900 text-right"
+            >
+              {{ product.subcategoryName }}
+            </span>
+
+          </div>
+
+
+          <!-- Availability -->
+
+          <div class="flex justify-between gap-4">
+
+            <span class="text-gray-500">
+              Availability
+            </span>
+
+            @if (product.isAvailable && product.stockQuantity > 0) {
+
+              <span class="font-semibold text-green-600">
+                In Stock
+              </span>
+
+            }
+            @else {
+
+              <span class="font-semibold text-red-600">
+                Out of Stock
+              </span>
+
+            }
+
+          </div>
+
+
+          <!-- Stock -->
+
+          <div class="flex justify-between gap-4">
+
+            <span class="text-gray-500">
+              Stock
+            </span>
+
+            <span
+              class="font-medium text-gray-900"
+            >
+              {{ product.stockQuantity }} units
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           QUANTITY
+      ========================== -->
+
+      <div class="mt-6">
+
+        <label
+          class="block text-sm font-semibold text-gray-800 mb-3"
+        >
+          Quantity
+        </label>
+
+        <div
+          class="inline-flex items-center border border-gray-300 rounded-lg overflow-hidden"
+        >
+
+          <button
+            type="button"
+            (click)="decreaseCartQuantity()"
+            class="w-11 h-11 flex items-center justify-center text-xl text-gray-600 hover:bg-gray-100 cursor-pointer transition"
+          >
+            −
+          </button>
+
+          <span
+            class="w-14 h-11 flex items-center justify-center border-x border-gray-300 font-semibold text-gray-900"
+          >
+            {{ cartQuantity() }}
+          </span>
+
+          <button
+            type="button"
+            (click)="increaseCartQuantity()"
+            class="w-11 h-11 flex items-center justify-center text-xl text-gray-600 hover:bg-gray-100 cursor-pointer transition"
+          >
+            +
+          </button>
+
+        </div>
+
+      </div>
+
+
+      @if (cartSuccessMessage()) {
+
+  <div
+    class="mt-4 px-4 py-3 rounded-lg
+           bg-green-50 text-green-700 text-sm font-medium"
+  >
+    {{ cartSuccessMessage() }}
+  </div>
+
+}
+
+@if (cartErrorMessage()) {
+
+  <div
+    class="mt-4 px-4 py-3 rounded-lg
+           bg-red-50 text-red-600 text-sm font-medium"
+  >
+    {{ cartErrorMessage() }}
+  </div>
+
+}
+
+
+      <!-- =========================
+           ACTION BUTTONS
+      ========================== -->
+
+      <div
+        class="flex flex-col sm:flex-row gap-3 mt-7"
+      >
+
+        <!-- Add To Cart -->
+
+        <button
+          type="button"
+          [disabled]="
+            !product.isAvailable ||
+            product.stockQuantity === 0
+          "
+          (click)="addToCart()"
+          class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#0B2A4A] text-white font-semibold hover:bg-[#123B63] cursor-pointer disabled:bg-gray-300 disabled:cursor-not-allowed transition"
+        >
+
+          <!-- Cart Icon -->
+
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 2h12m-8 4a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z"
+            />
+
+          </svg>
+
+          Add to Cart
+
+        </button>
+
+
+        <!-- Buy Now -->
+
+        <button
+          type="button"
+          [disabled]="
+            !product.isAvailable ||
+            product.stockQuantity === 0
+          "
+          (click)="buyNow()"
+          class="flex-1 inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-[#f94b1a] text-white font-semibold hover:bg-[#E85D00] cursor-pointer disabled:bg-gray-300 disabled:cursor-not-allowed transition"
+        >
+          Buy Now
+        </button>
+
+      </div>
+
+
+      <!-- Small Trust Message -->
+
+      <div
+        class="flex items-center gap-2 mt-5 text-sm text-gray-500"
+      >
+
+        <svg
+          class="w-5 h-5 text-green-600"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 13l4 4L19 7"
+          />
+
+        </svg>
+
+        Secure and reliable shopping with RapidMart
+
+      </div>
+
+      @if(returnAvailable())
+      {
+        <div
+           class="flex items-center gap-2 mt-5 text-sm text-gray-500"
+        >
+
+         <svg
+           class="w-5 h-5 text-green-600"
+           fill="none"
+           stroke="currentColor"
+           viewBox="0 0 24 24"
+         >
+
+           <path
+             stroke-linecap="round"
+             stroke-linejoin="round"
+             stroke-width="2"
+             d="M5 13l4 4L19 7"
+           />
+
+          </svg>
+
+          {{ returnDays() }} days easy return available.
+
+        </div>
+      }
+
+    </div>
+
+  </div>
+
+</main>
+
+</div>
+
+}

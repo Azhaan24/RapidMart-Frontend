@@ -1,0 +1,706 @@
+<div class="min-h-screen bg-[#F8FAFC]">
+
+  <!-- =========================================
+       PAGE HEADER
+  ========================================== -->
+
+  <section class="bg-white border-b border-gray-100">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+
+        <div>
+
+          <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
+
+            <a
+              routerLink="/"
+              class="hover:text-[#FF6A00] transition"
+            >
+              Home
+            </a>
+
+            <span>›</span>
+
+            <span class="text-[#0B2A4A]">
+              Sales Staff Dashboard
+            </span>
+
+          </div>
+
+          <h1 class="text-3xl font-bold text-[#0B2A4A]">
+            Sales Staff Dashboard
+          </h1>
+
+          <p class="mt-2 text-gray-500">
+            Manage your assigned orders and handle delivery operations.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          (click)="refreshDashboard()"
+          [disabled]="isLoading()"
+          class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-[#0B2A4A] text-white font-semibold hover:bg-[#123B63] cursor-pointer transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-4 h-4"
+            [class.animate-spin]="isLoading()"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 4v5h5"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 9a8 8 0 0 1 13.66-3.66L20 8"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M20 20v-5h-5"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M20 15a8 8 0 0 1-13.66 3.66L4 16"
+            />
+
+          </svg>
+
+          Refresh
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================
+       MAIN CONTENT
+  ========================================== -->
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- =========================================
+         ERROR MESSAGE
+    ========================================== -->
+
+    @if (errorMessage()) {
+
+      <div class="mb-6 rounded-xl border border-red-200 bg-red-50 px-5 py-4">
+
+        <div class="flex items-start gap-3">
+
+          <svg
+            class="w-5 h-5 text-red-500 mt-0.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M10.29 3.86l-7.82 13.5A2 2 0 004.2 20.5h15.6a2 2 0 001.73-3.14l-7.82-13.5a2 2 0 00-3.46 0z"
+            />
+
+          </svg>
+
+          <div>
+
+            <p class="font-semibold text-red-700">
+              Unable to load dashboard
+            </p>
+
+            <p class="text-sm text-red-600 mt-1">
+              {{ errorMessage() }}
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    }
+
+
+    <!-- =========================================
+         ORDER OVERVIEW
+    ========================================== -->
+
+    <section>
+
+      <div class="flex items-center justify-between mb-5">
+
+        <div>
+
+          <h2 class="text-xl font-bold text-[#0B2A4A]">
+            Order Overview
+          </h2>
+
+          <p class="text-sm text-gray-500 mt-1">
+            Current order activity across RapidMart.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      @if (isLoading()) {
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+
+          @for (item of [1,2,3,4,5,6]; track item) {
+
+            <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm animate-pulse">
+
+              <div class="h-10 w-10 rounded-lg bg-gray-200 mb-4"></div>
+
+              <div class="h-3 bg-gray-200 rounded w-20 mb-2"></div>
+
+              <div class="h-7 bg-gray-200 rounded w-12"></div>
+
+            </div>
+
+          }
+
+        </div>
+
+      } @else {
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+
+
+          <!-- TOTAL ASSIGNED ORDERS -->
+
+          <button
+            type="button"
+            (click)="openOrders()"
+            class="text-left bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md hover:border-[#FF6A00]/30 transition"
+          >
+
+            <div class="w-10 h-10 rounded-lg bg-[#0B2A4A] flex items-center justify-center mb-4">
+
+              <svg
+                class="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a3 3 0 006 0M9 5h6"
+                />
+
+              </svg>
+
+            </div>
+
+            <p class="text-sm text-gray-500">
+              My Assigned Orders
+            </p>
+
+            <p class="text-2xl font-bold text-[#0B2A4A] mt-1">
+              {{ dashboard()?.myAssignedOrders ?? 0 }}
+            </p>
+
+          </button>
+
+
+          <!-- PENDING -->
+
+          <button
+            type="button"
+            (click)="openOrders()"
+            class="text-left bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md hover:border-[#FF6A00]/30 transition"
+          >
+
+            <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center mb-4">
+
+              <svg
+                class="w-5 h-5 text-amber-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                  stroke-width="2"
+                />
+
+                <path
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M12 7v5l3 2"
+                />
+
+              </svg>
+
+            </div>
+
+            <p class="text-sm text-gray-500">
+              Pending
+            </p>
+
+            <p class="text-2xl font-bold text-[#0B2A4A] mt-1">
+              {{ dashboard()?.myPendingOrders ?? 0 }}
+            </p>
+
+          </button>
+
+
+          <!-- PROCESSING -->
+
+          <button
+            type="button"
+            (click)="openOrders()"
+            class="text-left bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md hover:border-[#FF6A00]/30 transition"
+          >
+
+            <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
+
+              <svg
+                class="w-5 h-5 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+
+              </svg>
+
+            </div>
+
+            <p class="text-sm text-gray-500">
+              Processing
+            </p>
+
+            <p class="text-2xl font-bold text-[#0B2A4A] mt-1">
+              {{ dashboard()?.myProcessingOrders ?? 0 }}
+            </p>
+
+          </button>
+
+
+          <!-- OUT FOR DELIVERY -->
+
+          <button
+            type="button"
+            (click)="openOrders()"
+            class="text-left bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md hover:border-[#FF6A00]/30 transition"
+          >
+
+            <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mb-4">
+
+              <svg
+                class="w-5 h-5 text-[#FF6A00]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 7h11v10H3zM14 10h4l3 3v4h-7zM7 17a2 2 0 104 0M16 17a2 2 0 104 0"
+                />
+
+              </svg>
+
+            </div>
+
+            <p class="text-sm text-gray-500">
+              Out for Delivery
+            </p>
+
+            <p class="text-2xl font-bold text-[#0B2A4A] mt-1">
+              {{ dashboard()?.myOutForDeliveryOrders ?? 0 }}
+            </p>
+
+          </button>
+
+
+          <!-- DELIVERED -->
+
+          <button
+            type="button"
+            (click)="openOrders()"
+            class="text-left bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md hover:border-[#FF6A00]/30 transition"
+          >
+
+            <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center mb-4">
+
+              <svg
+                class="w-5 h-5 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
+
+              </svg>
+
+            </div>
+
+            <p class="text-sm text-gray-500">
+              Delivered
+            </p>
+
+            <p class="text-2xl font-bold text-[#0B2A4A] mt-1">
+              {{ dashboard()?.myDeliveredOrders ?? 0 }}
+            </p>
+
+          </button>
+
+
+          <!-- RETURNS -->
+
+          <button
+            type="button"
+            (click)="openReturns()"
+            class="text-left bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md hover:border-[#FF6A00]/30 transition"
+          >
+
+            <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center mb-4">
+
+              <svg
+                class="w-5 h-5 text-purple-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 14l-3-3m0 0l3-3m-3 3h8a4 4 0 014 4v1m0 0l4-4m-4 4l-4-4"
+                />
+
+              </svg>
+
+            </div>
+
+            <p class="text-sm text-gray-500">
+              Returns
+            </p>
+
+            <p class="text-2xl font-bold text-[#0B2A4A] mt-1">
+              {{ dashboard()?.myOrdersReturned ?? 0 }}
+            </p>
+
+          </button>
+
+        </div>
+
+      }
+
+    </section>
+
+
+    <!-- =========================================
+         OPERATIONS
+    ========================================== -->
+
+    <section class="mt-10">
+
+      <div class="mb-5">
+
+        <h2 class="text-xl font-bold text-[#0B2A4A]">
+          My Operations
+        </h2>
+
+        <p class="text-sm text-gray-500 mt-1">
+          Quickly access the orders that need your attention.
+        </p>
+
+      </div>
+
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+
+        <!-- ASSIGNED ORDERS -->
+
+        <button
+          type="button"
+          (click)="openAssignedOrders()"
+          class="text-left bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-md hover:border-[#FF6A00]/30 transition cursor-pointer"
+        >
+
+          <div class="w-12 h-12 rounded-xl bg-[#0B2A4A] flex items-center justify-center mb-5">
+
+            <svg
+              class="w-6 h-6 text-white shrink-0 overflow-visible"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m5-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+
+            </svg>
+
+          </div>
+
+          <div class="flex items-center justify-between gap-4">
+
+            <div>
+
+              <h3 class="font-bold text-[#0B2A4A]">
+                My Assigned Orders
+              </h3>
+
+              <p class="mt-2 text-sm text-gray-500">
+                View and process orders currently assigned to you.
+              </p>
+
+            </div>
+
+            <span class="shrink-0 min-w-9 h-9 px-2 rounded-full bg-[#0B2A4A] text-white flex items-center justify-center text-sm font-bold">
+              {{ dashboard()?.myAssignedOrders ?? 0 }}
+            </span>
+
+          </div>
+
+          <div class="mt-5 text-sm font-semibold text-[#FF6A00]">
+            View Assigned Orders →
+          </div>
+
+        </button>
+
+
+        <!-- AVAILABLE ORDERS -->
+
+        <button
+          type="button"
+          (click)="openUnassignedOrders()"
+          class="text-left bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-md hover:border-[#FF6A00]/30 transition cursor-pointer"
+        >
+
+          <div class="w-12 h-12 rounded-xl bg-[#FF6A00] flex items-center justify-center mb-5">
+
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
+
+            </svg>
+
+          </div>
+
+          <div class="flex items-center justify-between gap-4">
+
+            <div>
+
+              <h3 class="font-bold text-[#0B2A4A]">
+                Available Orders
+              </h3>
+
+              <p class="mt-2 text-sm text-gray-500">
+                View unassigned orders available for self-assignment.
+              </p>
+
+            </div>
+
+            <span class="shrink-0 min-w-9 h-9 px-2 rounded-full bg-orange-100 text-[#FF6A00] flex items-center justify-center text-sm font-bold">
+              {{ dashboard()?.availableOrdersForClaim ?? 0 }}
+            </span>
+
+          </div>
+
+          <div class="mt-5 text-sm font-semibold text-[#FF6A00]">
+            Find Orders to Handle →
+          </div>
+
+        </button>
+
+
+        <!-- ALL ORDERS -->
+
+        <button
+          type="button"
+          (click)="openOrders()"
+          class="text-left bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-md hover:border-[#FF6A00]/30 transition cursor-pointer"
+        >
+
+          <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mb-5">
+
+            <svg
+              class="w-6 h-6 text-[#0B2A4A]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+
+            </svg>
+
+          </div>
+
+          <h3 class="font-bold text-[#0B2A4A]">
+            Order Management
+          </h3>
+
+          <p class="mt-2 text-sm text-gray-500">
+            View orders, update statuses, and manage your order workload.
+          </p>
+
+          <div class="mt-5 text-sm font-semibold text-[#FF6A00]">
+            Manage Orders →
+          </div>
+
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================
+         QUICK STATUS
+    ========================================== -->
+
+    <section class="mt-10">
+
+      <div class="mb-5">
+
+        <h2 class="text-xl font-bold text-[#0B2A4A]">
+          My Current Workload
+        </h2>
+
+        <p class="text-sm text-gray-500 mt-1">
+          A quick breakdown of your currently active orders.
+        </p>
+
+      </div>
+
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- ACTIVE -->
+
+        <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+
+          <p class="text-sm text-gray-500">
+            Active Orders
+          </p>
+
+          <p class="text-2xl font-bold text-[#0B2A4A] mt-1">
+            {{ dashboard()?.myActiveOrders ?? 0 }}
+          </p>
+
+        </div>
+
+
+        <!-- CONFIRMED -->
+
+        <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+
+          <p class="text-sm text-gray-500">
+            Confirmed
+          </p>
+
+          <p class="text-2xl font-bold text-[#0B2A4A] mt-1">
+            {{ dashboard()?.myConfirmedOrders ?? 0 }}
+          </p>
+
+        </div>
+
+
+        <!-- PROCESSING -->
+
+        <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+
+          <p class="text-sm text-gray-500">
+            Processing
+          </p>
+
+          <p class="text-2xl font-bold text-[#0B2A4A] mt-1">
+            {{ dashboard()?.myProcessingOrders ?? 0 }}
+          </p>
+
+        </div>
+
+
+        <!-- AVAILABLE -->
+
+        <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+
+          <p class="text-sm text-gray-500">
+            Available to Claim
+          </p>
+
+          <p class="text-2xl font-bold text-[#FF6A00] mt-1">
+            {{ dashboard()?.availableOrdersForClaim ?? 0 }}
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>

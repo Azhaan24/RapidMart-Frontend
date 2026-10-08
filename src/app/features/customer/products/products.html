@@ -1,0 +1,443 @@
+<div class="min-h-screen bg-gray-50">
+  <section class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!--a
+        routerLink="/"
+        class="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 mb-4"
+      >
+        ← Back to Home
+      </a-->
+
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">
+            
+            {{ subCategory?.name }}
+
+          </h1>
+
+          <p class="mt-2 text-gray-600">
+
+            Explore products in this Subcategory
+
+          </p>
+        </div>
+
+        <!-- SORT + FILTER -->
+        <div class="relative flex items-center gap-2 shrink-0">
+
+          <!-- SORT BUTTON -->
+          <div class="relative">
+            <button
+              type="button"
+              (click)="toggleSort()"
+              class="inline-flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors cursor-pointer"
+              title="Sort products"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.8"
+                stroke="currentColor"
+                class="w-5 h-5"
+              >
+
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M8 6v12m0 0-3-3m3 3 3-3M16 18V6m0 0-3 3m3-3 3 3"
+                />
+
+              </svg>
+            </button>
+
+            @if(showSort())
+            {
+              <div
+                class="absolute right-0 top-12 z-30 w-64 bg-white rounded-xl shadow-lg border border-gray-200 p-2"
+              >
+
+                <p class="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                  Sort By
+                </p>
+
+                <!-- NAME -->
+                <button
+                  type="button"
+                  (click)="selectSort(SortType.alphabeticalAsc)"
+                  class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
+                >
+                  <span>By Name</span>
+                  <span class="text-xs text-gray-400">
+                    A → Z
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  (click)="selectSort(SortType.alphabeticalDesc)"
+                  class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
+                >
+                  <span>By Name</span>
+                  <span class="text-xs text-gray-400">
+                    Z → A
+                  </span>
+                </button>
+
+                <!-- PRICE -->
+                <button
+                  type="button"
+                  (click)="selectSort(SortType.priceAsc)"
+                  class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
+                >
+                  <span>By Price</span>
+                  <span class="text-xs text-gray-400">
+                    Low → High
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  (click)="selectSort(SortType.priceDesc)"
+                  class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
+                >
+                  <span>By Price</span>
+                  <span class="text-xs text-gray-400">
+                    High → Low
+                  </span>
+                </button>
+
+                <!-- DATE -->
+                <button
+                  type="button"
+                  (click)="selectSort(SortType.dateAddedAsc)"
+                  class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
+                >
+                  <span>By Date Added</span>
+                  <span class="text-xs text-gray-400">
+                    Oldest
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  (click)="selectSort(SortType.dateAddedDesc)"
+                  class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
+                >
+                  <span>By Date Added</span>
+                  <span class="text-xs text-gray-400">
+                    Newest
+                  </span>
+                </button>
+
+              </div>
+            }
+          </div>
+
+          <!-- FILTER BUTTON -->
+          <div class="relative">
+            <button
+              type="button"
+              (click)="toggleFilters()"
+              class="inline-flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors cursor-pointer"
+              title="Filter products"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.8"
+                stroke="currentColor"
+                class="w-5 h-5"
+              >
+
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.75 5.25h16.5L14 12.5v5.25l-4 2v-7.25L3.75 5.25Z"
+                />
+
+              </svg>
+            </button>
+
+            @if(showFilters())
+            {
+              <div
+                class="absolute right-0 top-12 z-30 w-72 bg-white rounded-xl shadow-lg border border-gray-200 p-4"
+              >
+
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-sm font-semibold text-gray-900">
+                    Filters
+                  </h3>
+
+                  <button
+                    type="button"
+                    (click)="showFilters.set(false)"
+                    class="text-gray-400 hover:text-gray-600 cursor-pointer"
+                  >
+                    <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.8"
+                stroke="currentColor"
+                class="w-5 h-5"
+              >
+
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.75 5.25h16.5L14 12.5v5.25l-4 2v-7.25L3.75 5.25Z"
+                />
+
+              </svg>
+                  </button>
+                </div>
+
+                <!-- AVAILABILITY -->
+                <div class="mb-5">
+                  <p class="text-sm font-medium text-gray-800 mb-3">
+                    Availability
+                  </p>
+
+                  <label class="flex items-center gap-2 text-sm text-gray-600 mb-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      [checked]="filterAvailable() === true"
+                      (change)="filterAvailable.set($any($event.target).checked ? true : null)"
+                      class="rounded border-gray-300 text-[#f94b1a] focus:ring-[#f94b1a]"
+                    />
+                    Available
+                  </label>
+
+                  <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      [checked]="filterAvailable() === false"
+                      (change)="filterAvailable.set($any($event.target).checked ? false : null)"
+                      class="rounded border-gray-300 text-[#f94b1a] focus:ring-[#f94b1a]"
+                    />
+                    Unavailable
+                  </label>
+                </div>
+
+                <!-- RETURNABILITY -->
+                <div class="mb-5">
+                  <p class="text-sm font-medium text-gray-800 mb-3">
+                    Returnability
+                  </p>
+
+                  <label class="flex items-center gap-2 text-sm text-gray-600 mb-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      [checked]="filterReturnable() === true"
+                      (change)="filterReturnable.set($any($event.target).checked ? true : null)"
+                      class="rounded border-gray-300 text-[#f94b1a] focus:ring-[#f94b1a]"
+                    />
+                    Returnable
+                  </label>
+
+                  <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      [checked]="filterReturnable() === false"
+                      (change)="filterReturnable.set($any($event.target).checked ? false : null)"
+                      class="rounded border-gray-300 text-[#f94b1a] focus:ring-[#f94b1a]"
+                    />
+                    Non-returnable
+                  </label>
+                </div>
+
+                <!-- BUTTONS -->
+                <div class="flex items-center gap-2 pt-2 border-t border-gray-100">
+
+                  <button
+                    type="button"
+                    (click)="clearFilters()"
+                    class="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer transition-colors"
+                  >
+                    Clear
+                  </button>
+
+                  <button
+                    type="button"
+                    (click)="applyFilters()"
+                    class="flex-1 px-4 py-2.5 rounded-lg bg-[#f94b1a] text-white text-sm font-semibold hover:opacity-90 cursor-pointer transition-colors"
+                  >
+                    Apply
+                  </button>
+
+                </div>
+
+              </div>
+            }
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    @if(isLoading())
+    {
+      <div class="space-y-5">
+
+      @for(item of [1,2,3,4,5,6]; track item)
+      {
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse">
+          <div class="flex flex-col sm:flex-row">
+
+            <div class="w-full sm:w-56 h-48 sm:h-44 bg-gray-200 shrink-0"></div>
+
+            <div class="p-5 flex-1">
+
+              <div class="h-6 bg-gray-200 rounded w-2/3 mb-4"></div>
+              <div class="h-4 bg-gray-200 rounded w-full mb-2"></div>
+              <div class="h-4 bg-gray-200 rounded w-4/5 mb-5"></div>
+              <div class="h-6 bg-gray-200 rounded w-24 mb-4"></div>
+              <div class="h-10 bg-gray-200 rounded w-32"></div>
+
+            </div>
+          </div>
+        </div>
+      }
+      </div>
+    }
+
+    @if(!isLoading() && errorMessage())
+    {
+      <div class="text-center py-16">
+        <div class="text-5xl mb-4">
+
+         ⚠️
+        
+        </div>
+        
+        <p class="text-red-600 text-lg">
+          
+          {{ errorMessage() }}
+        
+        </p>
+      </div>
+    }
+
+
+    @if(!isLoading() && !errorMessage() && products().length === 0)
+    {
+      <div class="text-center py-16">
+        <div class="text-6xl mb-4">
+
+         🛒
+
+        </div>
+        
+        <h2 class="text-xl font-semibold text-gray-800">
+          
+          No products found
+        
+        </h2>
+        
+        <p class="text-gray-500 mt-2">
+          
+          There are currently no products in this subcategory.
+        
+        </p>
+      </div>
+    }
+
+    @if(!isLoading() && !errorMessage() && products().length > 0)
+    {
+      <div class="space-y-5">
+        @for(product of products(); track product.id)
+        {
+          <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+            <div class="flex flex-col sm:flex-row">
+              <div class="w-full sm:w-56 h-52 sm:h-44 shrink-0 overflow-hidden bg-gray-100">
+                <img
+                  [src]="imageBaseUrl + product.imageUrl"
+                  [alt]="product.name"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+                
+                <div class="p-5 flex-1 flex flex-col">
+                  <h2 class="text-xl font-semibold text-gray-900">
+
+                    {{ product.name }}
+
+                  </h2>
+                  <p class="mt-2 text-gray-600 text-sm line-clamp-2">
+                    
+                    {{ product.description }}
+                  
+                  </p>
+                  <div class="mt-4">
+                    <span class="text-2xl font-bold text-[#062446]">
+                      
+                      ₹{{ product.price | number:'1.2-2' }}
+                    
+                    </span>
+                  </div>
+                  <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      @if(product.isAvailable && product.stockQuantity > 0)
+                      {
+                        <span class="text-sm font-medium text-green-600">
+                          
+                          In Stock
+                        
+                        </span>
+                      }
+                      @if( !product.isAvailable || product.stockQuantity === 0)
+                      {
+                        <span class="text-sm font-medium text-red-600">
+                          
+                          Out of Stock
+                        
+                        </span>
+                      }
+                    </div>
+                    <a
+                      [routerLink]="['/category',categoryId,'subcategory',subCategoryId,'product',product.id]"
+                      class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-[#f94b1a] text-white text-sm font-semibold hover:opacity-90 transition-colors"
+                    >
+                    
+                     View Details
+                    
+                    </a>
+                  </div>
+                </div>
+            </div>
+          </div>
+        }
+        
+        @if(hasNextPage())
+        {
+          <div class="flex justify-center pt-6">
+            <button
+             type="button"
+             (click)="loadMore()"
+             class="px-8 py-3 rounded-lg bg-[#062446] text-white font-medium hover:opacity-95 cursor-pointer transition-colors"
+             >
+             
+             Load More
+            
+            </button>
+          </div>
+        }
+
+        @if(!hasNextPage() && products().length > pageSize())
+        {
+          <p class="text-center text-sm text-gray-500 pt-4">
+            
+            All products have been loaded.
+          
+          </p>
+        }
+      </div>
+    }
+  </section>
+</div>

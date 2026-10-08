@@ -1,0 +1,642 @@
+<div class="min-h-screen bg-[#F8FAFC]">
+
+  <!-- ==============================
+       PAGE HEADER
+  =============================== -->
+
+  <section class="bg-white border-b border-gray-100">
+
+    <div
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7"
+    >
+
+      <div
+        class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+      >
+
+        <div>
+
+          <div class="flex items-center gap-3">
+
+            <a
+              routerLink="/admin"
+              class="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:border-[#0B2A4A] hover:text-[#0B2A4A]"
+              title="Back to Admin Dashboard"
+            >
+              ←
+            </a>
+
+            <div>
+
+              <h1
+                class="text-2xl font-bold text-[#0B2A4A]"
+              >
+                Staff Workload
+              </h1>
+
+              <p class="mt-1 text-sm text-gray-500">
+                Monitor workload and performance of sales staff
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <button
+          type="button"
+          (click)="refreshWorkload()"
+          [disabled]="isLoading()"
+          class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#0B2A4A] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#123B63] cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+        >
+
+          <span
+            [class.animate-spin]="isLoading()"
+          >
+            ↻
+          </span>
+
+          Refresh
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ==============================
+       MAIN CONTENT
+  =============================== -->
+
+  <main
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+  >
+
+
+    <!-- ==============================
+         ERROR
+    =============================== -->
+
+    @if (errorMessage()) {
+
+      <div
+        class="mb-6 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700"
+      >
+        {{ errorMessage() }}
+      </div>
+
+    }
+
+
+    <!-- ==============================
+         SUMMARY CARDS
+    =============================== -->
+
+    <div
+      class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
+    >
+
+      <!-- Total Staff -->
+
+      <div
+        class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm"
+      >
+
+        <div class="flex items-start justify-between">
+
+          <div>
+
+            <p class="text-sm font-medium text-gray-500">
+              Total Staff
+            </p>
+
+            <p
+              class="mt-2 text-3xl font-bold text-[#0B2A4A]"
+            >
+              {{ dashboard()?.totalSalesStaff }}
+            </p>
+
+          </div>
+
+          <div
+            class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-xl"
+          >
+            👥
+          </div>
+
+        </div>
+
+        <p class="mt-3 text-xs text-gray-400">
+          Sales staff members
+        </p>
+
+      </div>
+
+
+      <!-- Active Orders -->
+
+      <div
+        class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm"
+      >
+
+        <div class="flex items-start justify-between">
+
+          <div>
+
+            <p class="text-sm font-medium text-gray-500">
+              Active Orders
+            </p>
+
+            <p
+              class="mt-2 text-3xl font-bold text-[#0B2A4A]"
+            >
+              {{ dashboard()?.activeOrders }}
+            </p>
+
+          </div>
+
+          <div
+            class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-xl"
+          >
+            📦
+          </div>
+
+        </div>
+
+        <p class="mt-3 text-xs text-gray-400">
+          Currently being handled
+        </p>
+
+      </div>
+
+
+      <!-- Completed Orders -->
+
+      <div
+        class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm"
+      >
+
+        <div class="flex items-start justify-between">
+
+          <div>
+
+            <p class="text-sm font-medium text-gray-500">
+              Completed Orders
+            </p>
+
+            <p
+              class="mt-2 text-3xl font-bold text-green-600"
+            >
+              {{ dashboard()?.ordersCompleted }}
+            </p>
+
+          </div>
+
+          <div
+            class="flex h-11 w-11 items-center justify-center rounded-xl bg-green-50 text-xl"
+          >
+            ✓
+          </div>
+
+        </div>
+
+        <p class="mt-3 text-xs text-gray-400">
+          Successfully delivered
+        </p>
+
+      </div>
+
+
+      <!-- Total Orders -->
+
+      <div
+        class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm"
+      >
+
+        <div class="flex items-start justify-between">
+
+          <div>
+
+            <p class="text-sm font-medium text-gray-500">
+              Total Orders Handled
+            </p>
+
+            <p
+              class="mt-2 text-3xl font-bold text-[#0B2A4A]"
+            >
+              {{ dashboard()?.allAssignedOrders }}
+            </p>
+
+          </div>
+
+          <div
+            class="flex h-11 w-11 items-center justify-center rounded-xl bg-orange-50 text-xl"
+          >
+            📊
+          </div>
+
+        </div>
+
+        <p class="mt-3 text-xs text-gray-400">
+          All assigned orders
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==============================
+         LOADING SKELETON
+    =============================== -->
+
+    @if (isLoading()) {
+
+      <div
+        class="mt-8 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm"
+      >
+
+        <div class="animate-pulse">
+
+          <div class="border-b border-gray-100 px-6 py-5">
+
+            <div
+              class="h-5 w-48 rounded bg-gray-200"
+            ></div>
+
+            <div
+              class="mt-2 h-4 w-72 rounded bg-gray-100"
+            ></div>
+
+          </div>
+
+          <div class="space-y-4 p-6">
+
+            @for (item of [1, 2, 3, 4, 5]; track item) {
+
+              <div
+                class="h-16 rounded-lg bg-gray-100"
+              ></div>
+
+            }
+
+          </div>
+
+        </div>
+
+      </div>
+
+    }
+
+
+    <!-- ==============================
+         STAFF TABLE
+    =============================== -->
+
+    @if (!isLoading()) {
+
+      <div
+        class="mt-8 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm"
+      >
+
+        <!-- Table Header -->
+
+        <div
+          class="border-b border-gray-100 px-6 py-5"
+        >
+
+          <h2
+            class="text-lg font-bold text-[#0B2A4A]"
+          >
+            Staff Performance
+          </h2>
+
+          <p class="mt-1 text-sm text-gray-500">
+            Compare current workload with completed work
+          </p>
+
+        </div>
+
+
+        <!-- Empty State -->
+
+        @if (staffWorkload().length === 0) {
+
+          <div
+            class="px-6 py-16 text-center"
+          >
+
+            <div
+              class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 text-2xl"
+            >
+              👥
+            </div>
+
+            <h3
+              class="mt-4 text-lg font-semibold text-gray-800"
+            >
+              No Sales Staff Found
+            </h3>
+
+            <p class="mt-2 text-sm text-gray-500">
+              There are currently no Sales Staff members to display.
+            </p>
+
+          </div>
+
+        }
+
+
+        <!-- Responsive Table -->
+
+        @if (staffWorkload().length > 0) {
+
+          <div
+            class="overflow-x-auto"
+          >
+
+            <table class="min-w-[1000px] w-full">
+
+              <thead class="bg-gray-50">
+
+                <tr>
+
+                  <th
+                    class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+                  >
+                    Staff
+                  </th>
+
+                  <th
+                    class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-500"
+                  >
+                    Active
+                  </th>
+
+                  <th
+                    class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-500"
+                  >
+                    Completed
+                  </th>
+
+                  <th
+                    class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-500"
+                  >
+                    Cancelled
+                  </th>
+
+                  <th
+                    class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-500"
+                  >
+                    Returned
+                  </th>
+
+                  <th
+                    class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-500"
+                  >
+                    Total
+                  </th>
+
+                  <th
+                    class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-500"
+                  >
+                    Completion
+                  </th>
+
+                  <th
+                    class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-500"
+                  >
+                    Performance
+                  </th>
+
+                </tr>
+
+              </thead>
+
+
+              <tbody class="divide-y divide-gray-100">
+
+                @for (
+                  staff of staffWorkload();
+                  track staff.staffId
+                ) {
+
+                  <tr
+                    class="transition hover:bg-gray-50"
+                  >
+
+                    <!-- Staff -->
+
+                    <td class="px-6 py-5">
+
+                      <div class="flex items-center gap-3">
+
+                        <div
+                          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0B2A4A] text-sm font-bold text-white"
+                        >
+                          {{ staff.staffName.charAt(0).toUpperCase() }}
+                        </div>
+
+                        <div>
+
+                          <p
+                            class="font-semibold text-gray-800"
+                          >
+                            {{ staff.staffName }}
+                          </p>
+
+                          <p
+                            class="mt-0.5 max-w-[180px] truncate text-xs text-gray-400"
+                            [title]="staff.staffId"
+                          >
+                            {{ staff.staffId }}
+                          </p>
+
+                        </div>
+
+                      </div>
+
+                    </td>
+
+
+                    <!-- Active -->
+
+                    <td class="px-6 py-5 text-center">
+
+                      <span
+                        class="inline-flex min-w-9 items-center justify-center rounded-full bg-amber-50 px-3 py-1 text-sm font-semibold text-amber-700"
+                      >
+                        {{ staff.activeOrders }}
+                      </span>
+
+                    </td>
+
+
+                    <!-- Completed -->
+
+                    <td class="px-6 py-5 text-center">
+
+                      <span
+                        class="inline-flex min-w-9 items-center justify-center rounded-full bg-green-50 px-3 py-1 text-sm font-semibold text-green-700"
+                      >
+                        {{ staff.completedOrders }}
+                      </span>
+
+                    </td>
+
+
+                    <!-- Cancelled -->
+
+                    <td class="px-6 py-5 text-center">
+
+                      <span
+                        class="inline-flex min-w-9 items-center justify-center rounded-full bg-red-50 px-3 py-1 text-sm font-semibold text-red-700"
+                      >
+                        {{ staff.cancelledOrders }}
+                      </span>
+
+                    </td>
+
+
+                    <!-- Returned -->
+
+                    <td class="px-6 py-5 text-center">
+
+                      <span
+                        class="inline-flex min-w-9 items-center justify-center rounded-full bg-orange-50 px-3 py-1 text-sm font-semibold text-orange-700"
+                      >
+                        {{ staff.returnedOrders }}
+                      </span>
+
+                    </td>
+
+
+                    <!-- Total -->
+
+                    <td class="px-6 py-5 text-center">
+
+                      <span
+                        class="font-bold text-[#0B2A4A]"
+                      >
+                        {{ staff.totalOrders }}
+                      </span>
+
+                    </td>
+
+
+                    <!-- Completion -->
+
+                    <td class="px-6 py-5">
+
+                      <div class="min-w-[120px]">
+
+                        <div
+                          class="mb-1 flex items-center justify-between"
+                        >
+
+                          <span class="text-xs text-gray-500">
+                            Completed
+                          </span>
+
+                          <span
+                            class="text-xs font-semibold text-gray-700"
+                          >
+                            {{ getCompletionRate(staff) }}%
+                          </span>
+
+                        </div>
+
+                        <div
+                          class="h-2 overflow-hidden rounded-full bg-gray-100"
+                        >
+
+                          <div
+                            class="h-full rounded-full bg-green-500 transition-all"
+                            [style.width.%]="getCompletionRate(staff)"
+                          ></div>
+
+                        </div>
+
+                      </div>
+
+                    </td>
+
+
+                    <!-- Performance -->
+
+                    <td class="px-6 py-5 text-center">
+
+                      <span
+                        class="inline-flex whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold"
+                        [ngClass]="getPerformanceClass(staff)"
+                      >
+                        {{ getPerformanceLabel(staff) }}
+                      </span>
+
+                    </td>
+
+                  </tr>
+
+                }
+
+              </tbody>
+
+            </table>
+
+          </div>
+          
+
+        }
+
+      </div>
+
+      <div class="flex items-center justify-center gap-4 mt-6 pb-4">
+       <!-- Previous -->
+       <button
+         type="button"
+         (click)="goToPreviousPage()"
+         [disabled]="!hasPreviousPage()"
+         class="px-4 py-2 rounded-lg border border-gray-300
+           text-sm font-medium
+           disabled:opacity-40
+           disabled:cursor-not-allowed
+           hover:bg-gray-50 cursor-pointer"
+        >
+        
+        Previous
+      
+      </button>
+      
+      <!-- Page information -->
+       <span class="text-sm text-gray-600">
+        
+        Page {{ pageNumber() }} of {{ totalPages() }}
+      
+      </span>
+      
+       <!-- Next -->
+       <button
+         type="button"
+         (click)="goToNextPage()"
+         [disabled]="!hasNextPage()"
+         class="px-4 py-2 rounded-lg border border-gray-300
+           text-sm font-medium
+           disabled:opacity-40
+           disabled:cursor-not-allowed
+           hover:bg-gray-50 cursor-pointer"
+        >
+        
+         Next
+        
+        </button>
+    </div>
+
+    }
+
+  </main>
+
+</div>
